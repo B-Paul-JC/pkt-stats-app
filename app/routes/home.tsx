@@ -43,7 +43,7 @@ export default function Home() {
     };
   }, [sid]);
 
-  const scale = sid ? 100 : 0.1;
+  const scale = sid ? 100 : 0.01;
 
   const floatingStyle: React.CSSProperties = {
     position: "fixed",

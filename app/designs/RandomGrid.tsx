@@ -55,7 +55,6 @@ const TopTextButton: React.FC<{ button: ButtonItem }> = ({ button }) => {
               `last-coords`,
               JSON.stringify({ x: clientX, y: clientY })
             );
-            console.log(`Mouse coordinates: (${clientX}, ${clientY})`);
           }}
           style={{ animationDelay: `${+button.id * 120}ms` }}
         >
