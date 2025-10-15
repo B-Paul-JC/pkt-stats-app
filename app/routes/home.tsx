@@ -12,12 +12,9 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const { sid } = useParams();
-  const { x, y } = window.localStorage.getItem("last-coords")
-    ? JSON.parse(window.localStorage.getItem("last-coords")!)
-    : { x: 0, y: 0 };
   console.log("Home route, sid:", sid);
 
-  const [pos, setPos] = useState<{ x: number; y: number }>({ x, y });
+  const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   useEffect(() => {
     function handleMove(e: MouseEvent | TouchEvent) {
@@ -32,6 +29,11 @@ export default function Home() {
           y = (e as MouseEvent).clientY;
         }
         setPos({ x, y });
+      } else {
+        const { x, y } = window.localStorage.getItem("last-coords")
+          ? JSON.parse(window.localStorage.getItem("last-coords")!)
+          : { x: 0, y: 0 };
+        setPos({ x, y });
       }
     }
     window.addEventListener("mousemove", handleMove);
@@ -40,7 +42,7 @@ export default function Home() {
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("touchmove", handleMove);
     };
-  }, [sid]);
+  }, []);
 
   const scale = sid ? 100 : 0.01;
 

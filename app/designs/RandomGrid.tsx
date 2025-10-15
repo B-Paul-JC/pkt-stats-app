@@ -28,7 +28,7 @@ const TopTextButton: React.FC<{ button: ButtonItem }> = ({ button }) => {
     // Button container is centered on its random point
     <div
       style={{ left: leftPos, top: topPos }}
-      className="group absolute w-20 h-20 -translate-x-1/2 -translate-y-1/2 z-30 cursor-pointer"
+      className="group absolute w-20 h-20 -translate-x-1/2 -translate-y-1/2 z-30 cursor-pointer transition-all duration-800"
     >
       {/* --- Text Positioned Above the Circle --- */}
       <div
