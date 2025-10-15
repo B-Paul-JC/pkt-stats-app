@@ -88,7 +88,7 @@ const Grid: React.FC = () => {
 
   return (
     <>
-      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 w-64 md:w-96">
+      <div className="z-30 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 p-4 w-64 md:w-96">
         <img src="/ui-logo.png" alt="" />
       </div>
       <div className="h-full flex items-center justify-center">
