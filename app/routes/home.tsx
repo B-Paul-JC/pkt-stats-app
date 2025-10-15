@@ -12,7 +12,6 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Home() {
   const { sid } = useParams();
-  console.log("Home route, sid:", sid);
 
   const [pos, setPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
@@ -42,9 +41,9 @@ export default function Home() {
       window.removeEventListener("mousemove", handleMove);
       window.removeEventListener("touchmove", handleMove);
     };
-  }, []);
+  }, [sid]);
 
-  const scale = sid ? 100 : 0.01;
+  const scale = sid ? 100 : 0.1;
 
   const floatingStyle: React.CSSProperties = {
     position: "fixed",
