@@ -12,8 +12,11 @@ import { LoginModal } from "~/auth/modal";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
+    { title: "University of Ibadan Pocket Statistics" },
+    {
+      name: "description",
+      content: "View the current statistical data for the Univeristy of Ibadan",
+    },
   ];
 }
 
