@@ -11,7 +11,10 @@ interface ButtonItem {
   color?: string; // Optional color class
 }
 
-const TopTextButton: React.FC<{ button: ButtonItem }> = ({ button }) => {
+const TopTextButton: React.FC<{
+  button: ButtonItem;
+  disp: "none" | "absolute";
+}> = ({ button, disp }) => {
   const [leftPos, setLeftPos] = useState<string>(`${button.randomX}%`);
   const [topPos, setTopPos] = useState<string>(`${button.randomY}%`);
 
@@ -27,7 +30,7 @@ const TopTextButton: React.FC<{ button: ButtonItem }> = ({ button }) => {
   return (
     // Button container is centered on its random point
     <div
-      style={{ left: leftPos, top: topPos }}
+      style={{ left: leftPos, top: topPos, display: disp }}
       className="group absolute w-20 h-20 -translate-x-1/2 -translate-y-1/2 z-30 cursor-pointer transition-all duration-800"
     >
       {/* --- Text Positioned Above the Circle --- */}
@@ -71,7 +74,15 @@ const RandomGrid: React.FC<{ buttons: ButtonItem[] }> = ({ buttons }) => {
     // The container is relative and given a fixed height/width to define the space
     <div className="relative w-full h-[500px] max-w-7xl mx-auto">
       {buttons.map((button) => (
-        <TopTextButton key={button.id} button={button} />
+        <TopTextButton
+          key={button.id}
+          button={button}
+          disp={
+            ["Students", "Staff", "Accomodation", "Faculty"].includes(button.label)
+              ? "absolute"
+              : "none"
+          }
+        />
       ))}
     </div>
   );

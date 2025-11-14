@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -8,6 +9,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { useAppStore } from "~/store/useAppStore";
 
 // #region Sample data
 const data = [
@@ -57,6 +59,25 @@ const data = [
 
 // #endregion
 export const SimpleBarChart = () => {
+  const cdata = useAppStore((state) => state.cdata);
+  const selectedType = useAppStore((state) => state.selectedType);
+  const keyValue = useAppStore((state) => state.keyValue);
+  const [finalData, setFinalData] = useState(data as any[]);
+
+  useEffect(() => {
+    if (keyValue === "students" || "staff" || "accomodation") {
+      const udata = (
+        typeof cdata === "object" &&
+        cdata !== null &&
+        selectedType.value in cdata
+          ? cdata[selectedType.value as keyof typeof cdata]
+          : data
+      ) as any[];
+
+      setFinalData(udata);
+    }
+  }, [cdata, selectedType, keyValue]);
+
   return (
     <BarChart
       style={{
@@ -67,7 +88,7 @@ export const SimpleBarChart = () => {
         aspectRatio: 1.618,
       }}
       responsive
-      data={data}
+      data={finalData}
       margin={{
         top: 5,
         right: 0,
@@ -76,17 +97,17 @@ export const SimpleBarChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
+      <XAxis dataKey={Object.keys(finalData[0] || {})[0]} />
       <YAxis width="auto" />
       <Tooltip />
       <Legend />
       <Bar
-        dataKey="pv"
+        dataKey={Object.keys(finalData[0] || {})[1]}
         fill="#0088FE"
         activeBar={<Rectangle fill="#0088FE88" stroke="#0088FE33" />}
       />
       <Bar
-        dataKey="uv"
+        dataKey={Object.keys(finalData[0] || {})[2]}
         fill="#00C49F"
         activeBar={<Rectangle fill="#00C49F88" stroke="#00C49F33" />}
       />

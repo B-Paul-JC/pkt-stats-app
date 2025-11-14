@@ -1,0 +1,40 @@
+{
+  "hallResidence": [
+    {
+      "Category": "PG Male Students Accommodated",
+      "Number of Students": 669
+    },
+    {
+      "Category": "PG Female Students Accommodated",
+      "Number of Students": 634
+    },
+    {
+      "Category": "UG Male Students Accommodated",
+      "Number of Students": 4187
+    },
+    {
+      "Category": "UG Female Students Accommodated",
+      "Number of Students": 2732
+    }
+  ],
+  "hallResidenceByGender": [
+    {
+      "Gender": "Female",
+      "Accommodation % of Total": 0.29
+    },
+    {
+      "Gender": "Male",
+      "Accommodation % of Total": 0.4
+    }
+  ],
+  "staffResidence": [
+    {
+      "Staff Category": "Senior Staff",
+      "% Accommodated on Campus": 0.2
+    },
+    {
+      "Staff Category": "Junior Staff",
+      "% Accommodated on Campus": 0.28
+    }
+  ]
+}

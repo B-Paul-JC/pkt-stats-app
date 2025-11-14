@@ -6,7 +6,7 @@ const Grid: React.FC = () => {
   const myButtons = [
     {
       id: "1",
-      label: "Excellence",
+      label: "Accomodation",
       randomX: 70,
       randomY: 20,
       randX: 80,

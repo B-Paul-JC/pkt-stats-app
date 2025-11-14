@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ResponsiveContainer,
   PieChart,
@@ -6,6 +7,7 @@ import {
   Legend,
   type PieLabelRenderProps,
 } from "recharts";
+import { useAppStore } from "~/store/useAppStore";
 
 // sample data
 const data = [
@@ -16,65 +18,86 @@ const data = [
 ];
 
 const RADIAN = Math.PI / 180;
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-/**
- * Render a custom label for each pie slice.
- * Positions the label midway between innerRadius and outerRadius at the slice's midAngle,
- * and displays the percent value as a whole number followed by '%'.
- */
-const renderCustomizedLabel = ({
-  cx,
-  cy,
-  midAngle,
-  innerRadius,
-  outerRadius,
-  percent,
-}: PieLabelRenderProps) => {
-  // Ensure required values are present before calculating positions
-  if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
-    return null;
-  }
-
-  // Compute a radius halfway between inner and outer radius for label placement
-  const radius = +innerRadius + (+outerRadius - +innerRadius) * 0.5;
-
-  // Normalize center coordinates to numbers
-  const ncx = +cx;
-  const ncy = +cy;
-
-  // Convert midAngle to radians and compute label x/y coordinates (negate angle to match chart orientation)
-  const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-  const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
-
-  // Render the label text, anchoring left/right depending on which side of the center it's on
-  return (
-    <text
-      x={x}
-      y={y}
-      fill="white"
-      textAnchor={x > ncx ? "start" : "end"}
-      dominantBaseline="central"
-    >
-      {`${(Number(percent ?? 1) * 100).toFixed(0)}%`}
-    </text>
-  );
-};
+const COLORS = [
+  "#0088FE",
+  "#00C49F",
+  "#FFBB28",
+  "#FF8042",
+  "#AA336A",
+  "#33AA99",
+  "#9933AA",
+  "#AA9933",
+];
 
 export const PieCT = () => {
+  const cdata = useAppStore((state) => state.cdata);
+  const selectedType = useAppStore((state) => state.selectedType);
+  const keyValue = useAppStore((state) => state.keyValue);
+  const faculty = useAppStore((state) => state.faculty);
+  const [finalData, setFinalData] = useState(data);
+
+  useEffect(() => {
+    if (keyValue === "faculty") {
+      const udata = (
+        typeof cdata === "object" &&
+        cdata !== null &&
+        selectedType.value in cdata
+          ? cdata[selectedType.value as keyof typeof cdata]
+          : data
+      ) as any[];
+
+      const filteredData = udata.filter(
+        (item) => item.Faculty === faculty
+      )[0] as any;
+      filteredData.Faculty = "";
+
+      const { Faculty, ...intermediateData } = filteredData;
+      const fData = Object.entries(intermediateData).map(([key, value], i) => {
+        // The structure you want for each item in the final array
+        return {
+          name: key,
+          value: value,
+          fill: COLORS[i],
+        };
+      }) as { name: string; value: number; fill: string }[];
+      setFinalData(fData);
+    }
+    if (keyValue === "students" || "staff" || "accomodation") {
+      const udata = (
+        typeof cdata === "object" &&
+        cdata !== null &&
+        selectedType.value in cdata
+          ? cdata[selectedType.value as keyof typeof cdata]
+          : data
+      ) as any[];
+
+      const uData = udata.map((item: { [x: string]: any; year: any }, i) => {
+        const { Year, ...rest } = item;
+        const total = Object.values(rest).reduce(
+          (sum: number, val) => sum + (+val as number),
+          0
+        );
+        return { name: Year, value: total, fill: COLORS[i] };
+      }) as any[];
+      console.log({ udata, uData, selectedType, keyValue });
+
+      setFinalData(uData);
+    }
+  }, [keyValue, selectedType, cdata, faculty]);
+
   return (
     <ResponsiveContainer width="90%" height={300}>
       <PieChart>
         <Pie
-          data={data}
+          data={finalData}
           dataKey="value"
           nameKey="name"
           cx="40%"
           cy="50%"
           outerRadius={100}
           isAnimationActive={true}
-          label={renderCustomizedLabel}
-          labelLine={false}
+          label
+          labelLine={true}
         >
           {data.map((entry, index) => (
             <Cell
@@ -88,7 +111,7 @@ export const PieCT = () => {
         <text
           x="40%"
           y="50%"
-          textAnchor="middle"
+          textAnchor="end"
           dominantBaseline="central"
           style={{ pointerEvents: "none" }}
         >
@@ -96,7 +119,7 @@ export const PieCT = () => {
             Total
           </tspan>
           <tspan x="90%" dy="1.4em" fontSize={18} fontWeight={700} fill="#222">
-            {data.reduce((sum, item) => sum + item.value, 0)}
+            {finalData.reduce((sum, item) => sum + item.value, 0)}
           </tspan>
         </text>
 
