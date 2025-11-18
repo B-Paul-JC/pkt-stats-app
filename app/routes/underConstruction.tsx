@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 const UnderConstruction: FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br bg-indigo-600 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full text-center">
         {/* Header with Icon */}
         <div className="mb-8 flex justify-center">

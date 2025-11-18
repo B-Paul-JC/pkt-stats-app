@@ -165,6 +165,7 @@ export interface IAppStoreVariables {
   cdata: IChartDataPointObj | IChartDataPoint[];
   // Store the user's filter selection
   appRole: AppRole;
+  isLoggedIn: boolean;
   accessLevel: IAccessLevel;
   focus:
     | { value: string; display: string }
@@ -186,6 +187,7 @@ export interface IAppStoreActions {
   setKeyValue: (keyValue: string) => void;
   setFaculty: (faculty: FACULTY) => void;
   setDepartment: (department: string) => void;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
   reset: () => void;
 }
 export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
@@ -193,6 +195,7 @@ export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
 const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   cdata: sdatasets, // Load initial data
+  isLoggedIn: false,
   appRole: "STUDENT",
   accessLevel: ACCESS_LEVELS["STUDENT"],
   year: "",
@@ -224,6 +227,7 @@ export const useAppStore = create<IAppStore>((set) => ({
           .replace(/^./, (str: string) => str.toUpperCase()),
       },
     }),
+  setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
   toggleModalTop() {
     set((turnip) => {
       let newModalTop: IAppStoreVariables["modalTop"] = "-100vh";

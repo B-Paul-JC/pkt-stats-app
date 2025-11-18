@@ -1,10 +1,11 @@
 import { LockIcon } from "lucide-react"; // Make sure to import your icon
 import { useAppStore, type FACULTY } from "~/store/useAppStore";
-import { useEffect, useState } from "react";
-import { ACCESS_LEVELS, type AppRole } from "~/auth/accessLevel";
+import { useState } from "react";
 
 export const EditLogic = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Replace with actual authentication logic
+  const isLoggedIn = useAppStore((state) => state.isLoggedIn);
+  const setIsLoggedIn = useAppStore((state) => state.setIsLoggedIn);
+  // Replace with actual authentication logic
   const onLogin = () => {
     // Implement your login logic here
   };
@@ -54,47 +55,6 @@ export const EditLogic = () => {
     "Technology",
     "Veterinary Medicine",
   ];
-
-  const defunct = (ev: KeyboardEvent) => {
-    if (ev.key === "k") {
-      setIsLoggedIn((prev) => !prev);
-    }
-    if (ev.key === ";") {
-      const store = useAppStore.getState();
-      const currentRole = store.appRole ?? "VISITOR";
-      const roles: AppRole[] = [
-        "VISITOR",
-        "STUDENT",
-        "STAFF",
-        "HOD",
-        "DEAN",
-        "PROVOST",
-        "ADMIN",
-        "VC",
-      ]; // adjust to your app's defined access tiers
-      const idx = roles.indexOf(currentRole);
-      const nextRole =
-        idx === -1 || idx === roles.length - 1 ? roles[0] : roles[idx + 1];
-      const accessLevel = ACCESS_LEVELS[nextRole];
-
-      store.setAppRole(nextRole);
-      store.setAccessLevel(accessLevel);
-
-      console.log({ nextRole, accessLevel });
-    }
-  };
-
-  useEffect(() => {
-    window.addEventListener("keypress", (ev) => {
-      defunct(ev);
-    });
-
-    return () => {
-      window.removeEventListener("keypress", (ev) => {
-        defunct(ev);
-      });
-    };
-  }, []);
 
   return (
     <>
