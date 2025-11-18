@@ -80,6 +80,23 @@ export default function Statistic() {
           </div>
         </div>
       </div>
+      <div className="fixed bottom-6 right-6 bg-gray-800 text-white text-sm rounded-lg p-3 shadow-lg max-w-xs z-40">
+        <p className="mb-1">
+          Click{" "}
+          <span className="font-semibold bg-gray-500 font-mono rounded p-2 shadow-gray-500 shadow-2xl">
+            k
+          </span>{" "}
+          to toggle login status
+        </p>
+        <br />
+        <p>
+          Click{" "}
+          <span className="font-semibold bg-gray-500 font-mono rounded p-2 shadow-gray-500 shadow-2xl">
+            ;
+          </span>{" "}
+          to access different user types
+        </p>
+      </div>
       <BottomDrawer />
     </>
   );

@@ -66,7 +66,8 @@ const CustomizedAxisTick = ({ x, y, payload }: any) => {
         dy={16}
         textAnchor="end"
         fill="#666"
-        transform="rotate(-35)"
+        transform="rotate(-45)"
+        fontSize={10}
       >
         {payload.value}
       </text>
@@ -84,9 +85,7 @@ export const SimpleBarChart = () => {
   useEffect(() => {
     if (keyValue === "students" || "staff" || "accomodation") {
       const udata = (
-        typeof cdata === "object" &&
-        cdata !== null &&
-        focus.value in cdata
+        typeof cdata === "object" && cdata !== null && focus.value in cdata
           ? cdata[focus.value as keyof typeof cdata]
           : data
       ) as any[];
@@ -114,20 +113,36 @@ export const SimpleBarChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey={Object.keys(finalData[0] || {})[0]} tick={CustomizedAxisTick} height={60} />
+      <XAxis
+        dataKey={Object.keys(finalData[0] || {})[0]}
+        tick={CustomizedAxisTick}
+        height={60}
+      />
       <YAxis width="auto" />
       <Tooltip />
       <Legend />
-      <Bar
-        dataKey={Object.keys(finalData[0] || {})[1]}
-        fill="#0088FE"
-        activeBar={<Rectangle fill="#0088FE88" stroke="#0088FE33" />}
-      />
-      <Bar
-        dataKey={Object.keys(finalData[0] || {})[2]}
-        fill="#00C49F"
-        activeBar={<Rectangle fill="#00C49F88" stroke="#00C49F33" />}
-      />
+      {Object.keys(finalData[0] || {})
+        .slice(1)
+        .map((key, index) => {
+          const colors = [
+            "#0088FE",
+            "#00C49F",
+            "#FFBB28",
+            "#FF8042",
+            "#8884D8",
+          ];
+          const color = colors[index % colors.length];
+          return (
+            <Bar
+              key={key}
+              dataKey={key}
+              fill={color}
+              activeBar={
+                <Rectangle fill={color + "88"} stroke={color + "33"} />
+              }
+            />
+          );
+        })}
     </BarChart>
   );
 };

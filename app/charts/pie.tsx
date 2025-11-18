@@ -1,5 +1,9 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import {
+  aggregateAllNumericFields,
+  type DataRecord,
+} from "~/analytics/pieChartReducer";
 import { useAppStore } from "~/store/useAppStore";
 
 // sample data
@@ -26,6 +30,7 @@ export const PieCT = () => {
   const focus = useAppStore((state) => state.focus);
   const keyValue = useAppStore((state) => state.keyValue);
   const faculty = useAppStore((state) => state.faculty);
+  const criteria = useAppStore((state) => state.criteria);
   const [finalData, setFinalData] = useState(data);
 
   useEffect(() => {
@@ -41,27 +46,40 @@ export const PieCT = () => {
         return;
       }
 
-      const uData = udata.map((item: { [x: string]: any }) => {
-        if (item.Faculty === faculty) {
-          const { Faculty, ...others } = item;
-          return others;
-        } else {
-          return null;
-        }
-      }) as { [x: string]: any };
+      if (faculty === "All") {
+        const reducedData = aggregateAllNumericFields(udata, criteria)[0];
 
-      const iData = uData.filter(Boolean);
+        const fData = Object.entries(reducedData).map(([name, value], i) => ({
+          name,
+          value,
+          fill: COLORS[i],
+        })) as unknown as { name: string; value: number; fill: string }[];
 
-      const filteredData = iData.length < 1 ? {} : (iData[0] as any);
+        setFinalData(fData);
+      } else {
+        const uData = udata.map((item: DataRecord) => {
+          const { Faculty, ...iData2 } = item;
+          return { [item.Faculty]: iData2 };
+        }) as unknown as DataRecord[];
 
-      const fData = Object.entries(filteredData).map(([name, value], i) => ({
-        name,
-        value,
-        fill: COLORS[i],
-      })) as { name: string; value: number; fill: string }[];
+        const iData = uData.filter(
+          (item: {}) => Object.keys(item)[0] === faculty
+        )[0];
 
-      console.log(filteredData);
-      setFinalData(fData);
+        const { Faculty, ...iData2 } = iData;
+
+        const filteredData =
+          Object.keys(iData2).length < 1 ? {} : (iData2[faculty] as any);
+
+        const fData = Object.entries(filteredData).map(([name, value], i) => ({
+          name,
+          value,
+          fill: COLORS[i],
+        })) as { name: string; value: number; fill: string }[];
+
+        console.log(filteredData);
+        setFinalData(fData);
+      }
     }
     if (
       keyValue === "students" ||
@@ -74,18 +92,28 @@ export const PieCT = () => {
           : data
       ) as any[];
 
-      const uData = udata.map((item: { [x: string]: any; year: any }, i) => {
-        const { Year, ...rest } = item;
-        const total = Object.values(rest).reduce(
-          (sum: number, val) => sum + (+val as number),
-          0
-        );
-        return { name: Year, value: total, fill: COLORS[i] };
-      }) as any[];
+      const reducedData = aggregateAllNumericFields(udata, criteria)[0];
 
-      setFinalData(uData);
+      const fData = Object.entries(reducedData).map(([name, value], i) => ({
+        name,
+        value,
+        fill: COLORS[i],
+      })) as unknown as { name: string; value: number; fill: string }[];
+
+      // const uData = udata.map((item: { [x: string]: any; year: any }, i) => {
+      //   const { Year, ...rest } = item;
+      //   const total = Object.values(rest).reduce(
+      //     (sum: number, val) => sum + (+val as number),
+      //     0
+      //   );
+      //   return { name: Year, value: total, fill: COLORS[i] };
+      // }) as any[];
+
+      console.log(reducedData);
+
+      setFinalData(fData);
     }
-  }, [keyValue, focus, cdata, faculty]);
+  }, [keyValue, focus, cdata, faculty, criteria]);
 
   return (
     <ResponsiveContainer width="90%" height={300}>
@@ -96,10 +124,12 @@ export const PieCT = () => {
           nameKey="name"
           cx="40%"
           cy="50%"
-          outerRadius={100}
+          innerRadius="30%"
+          outerRadius="80%"
+          // Corner radius is the rounded edge of each pie slice
+          cornerRadius="5%"
           isAnimationActive={true}
-          label
-          labelLine={true}
+          label={false}
         >
           {finalData.map((entry, index) => (
             <Cell
@@ -117,16 +147,38 @@ export const PieCT = () => {
           dominantBaseline="central"
           style={{ pointerEvents: "none" }}
         >
-          <tspan x="90%" dy="6.7em" fontSize={12} fill="#666">
-            Total
-          </tspan>
-          <tspan x="90%" dy="1.4em" fontSize={18} fontWeight={700} fill="#222">
-            {finalData.reduce((sum, item) => sum + item.value, 0)}
+          <tspan x="100%" dy="9em" fontSize={16} fill="#222">
+            Total - {finalData.reduce((sum, item) => sum + item.value, 0)}
           </tspan>
         </text>
 
-        <Legend layout="vertical" verticalAlign="middle" align="right" />
+        <Legend
+          content={renderLegend}
+          layout="vertical"
+          verticalAlign="middle"
+          align="right"
+        />
       </PieChart>
     </ResponsiveContainer>
+  );
+};
+
+const renderLegend = (props: any) => {
+  const { payload } = props as { payload: any[] };
+
+  return (
+    <ul>
+      {payload.map((entry, index) => {
+        return (
+          <li
+            key={`item-${index}`}
+            className="text-xs"
+            style={{ color: entry.color }}
+          >
+            {entry.value} - {entry.payload.value}
+          </li>
+        );
+      })}
+    </ul>
   );
 };

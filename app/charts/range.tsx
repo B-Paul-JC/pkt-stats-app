@@ -20,6 +20,24 @@ const data = [
   { name: "Page G", uv: 3490, pv: 4300, amt: 2100 },
 ];
 
+const CustomizedAxisTick = ({ x, y, payload }: any) => {
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="end"
+        fill="#666"
+        transform="rotate(-45)"
+        fontSize={10}
+      >
+        {payload.value}
+      </text>
+    </g>
+  );
+};
+
 export const StackedAreaChart = () => {
   const cdata = useAppStore((state) => state.cdata);
   const focus = useAppStore((state) => state.focus);
@@ -29,9 +47,7 @@ export const StackedAreaChart = () => {
   useEffect(() => {
     if (keyValue === "students" || "staff" || "accomodation") {
       const udata = (
-        typeof cdata === "object" &&
-        cdata !== null &&
-        focus.value in cdata
+        typeof cdata === "object" && cdata !== null && focus.value in cdata
           ? cdata[focus.value as keyof typeof cdata]
           : data
       ) as any[];
@@ -43,24 +59,35 @@ export const StackedAreaChart = () => {
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={finalData}>
-        <XAxis dataKey={Object.keys(finalData[0] || {})[0]} />
+        <XAxis
+          dataKey={Object.keys(finalData[0] || {})[0]}
+          tick={CustomizedAxisTick}
+          height={60}
+        />
         <YAxis />
         <Tooltip />
         <Legend />
-        <Area
-          type="monotone"
-          dataKey={Object.keys(finalData[0] || {})[1]}
-          stackId="1"
-          stroke="#8884d8"
-          fill="#8884d8"
-        />
-        <Area
-          type="monotone"
-          dataKey={Object.keys(finalData[0] || {})[2]}
-          stackId="1"
-          stroke="#82ca9d"
-          fill="#82ca9d"
-        />
+        {Object.keys(finalData[0] || {})
+          .slice(1, 6)
+          .map((key, index) => {
+            const colors = [
+              "#8884d8",
+              "#82ca9d",
+              "#ffc658",
+              "#ff7c7c",
+              "#8dd1e1",
+            ];
+            return (
+              <Area
+                key={key}
+                type="monotone"
+                dataKey={key}
+                stackId="1"
+                stroke={colors[index]}
+                fill={colors[index]}
+              />
+            );
+          })}
       </AreaChart>
     </ResponsiveContainer>
   );

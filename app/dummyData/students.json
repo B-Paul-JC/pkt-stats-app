@@ -97,33 +97,38 @@
   ],
   "internationalStudents": [
     {
-      "Year": 2022,
+      "Year": "2021/22",
       "Number of International Students": 117,
       "Female International Students": 51,
+      "Male International Students": 66,
       "Number of Countries (Diversity)": 46
     },
     {
-      "Year": 2021,
+      "Year": "2020/21",
       "Number of International Students": 101,
       "Female International Students": 32,
+      "Male International Students": 69,
       "Number of Countries (Diversity)": 41
     },
     {
-      "Year": 2019,
+      "Year": "2018/19",
       "Number of International Students": 325,
       "Female International Students": 128,
+      "Male International Students": 197,
       "Number of Countries (Diversity)": 50
     },
     {
-      "Year": 2018,
+      "Year": "2017/18",
       "Number of International Students": 378,
       "Female International Students": 112,
+      "Male International Students": 266,
       "Number of Countries (Diversity)": 50
     },
     {
-      "Year": 2017,
+      "Year": "2016/17",
       "Number of International Students": 335,
       "Female International Students": 110,
+      "Male International Students": 225,
       "Number of Countries (Diversity)": 52
     }
   ]

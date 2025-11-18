@@ -1,6 +1,6 @@
 import { LockIcon } from "lucide-react"; // Make sure to import your icon
-import { useAppStore, type FACULTY } from "~/store/useAppStore";
-import { useState } from "react";
+import { useEffect } from "react";
+import { useAppStore, type FACULTY, type k_type } from "~/store/useAppStore";
 
 export const EditLogic = () => {
   const isLoggedIn = useAppStore((state) => state.isLoggedIn);
@@ -17,7 +17,10 @@ export const EditLogic = () => {
   const setFaculty = useAppStore((state) => state.setFaculty);
   const departments = useAppStore((state) => state.departments);
   const toggleModalTop = useAppStore((state) => state.toggleModalTop);
+  const criteria = useAppStore((state) => state.criteria);
+  const setCriteria = useAppStore((state) => state.setCriteria);
   const keyValue = useAppStore((state) => state.keyValue);
+  const cdata = useAppStore((state) => state.cdata);
   const accessLevel = useAppStore((state) => state.accessLevel);
 
   const keys = {
@@ -36,6 +39,29 @@ export const EditLogic = () => {
     ],
     accomodation: ["hallResidence", "hallResidenceByGender", "staffResidence"],
   }[keyValue as keyof Record<string, string[]>];
+
+  const focusData = cdata[focus.value as keyof typeof cdata];
+  const k_array = Array.isArray(focusData)
+    ? Object.keys(focusData[0] || {}).slice(1)
+    : [];
+  const firstKey = k_array[0];
+  useEffect(() => {
+    if (keys && keys.length > 0 && !keys.includes(focus.value)) {
+      setFocus(keys[0]);
+    }
+    if (k_array.length > 0 && !k_array.includes(criteria)) {
+      setCriteria(firstKey as k_type);
+    }
+  }, [
+    keyValue,
+    focus,
+    criteria,
+    keys,
+    k_array,
+    setFocus,
+    setCriteria,
+    firstKey,
+  ]);
 
   const facultyKeys = [
     "All",
@@ -78,68 +104,100 @@ export const EditLogic = () => {
           </button>
         </div>
       ) : (
-        <div className="space-y-4 w-full p-4">
+        <div className="space-y-4 w-full p-4 overflow-y-scroll">
           <h3 className="text-lg font-semibold text-gray-700">Filter Data</h3>
           <div className="space-y-3 w-full">
             <div>Chart Focus:</div>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              onChange={({ target }) => {
-                setFocus(target.value);
-              }}
-            >
-              <option value={`${focus.value}`} selected>
-                {focus.display}
-              </option>
-              {keys
-                ?.filter((key) => key !== focus.value)
-                .map((key, i) => (
-                  <option key={i} value={key}>
+            <div className="space-y-2 p-3 bg-gray-100 rounded-md border border-gray-300">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {keys?.map((key, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setFocus(key)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                      key === focus.value
+                        ? "bg-indigo-600 text-white"
+                        : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                    }`}
+                  >
                     {key
                       .replace(/([A-Z])/g, " $1")
                       .trim()
                       .replace(/^./, (str) => str.toUpperCase())}
-                  </option>
+                  </button>
                 ))}
-            </select>
-            <div> Faculty: </div>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              onChange={({ target }) => {
-                setFaculty(target.value as FACULTY);
-              }}
-            >
-              <option value={`${faculty}`}>{faculty}</option>
-              {facultyKeys
-                ?.filter((key) => key)
-                .map((key, i) => {
-                  if (key !== faculty)
-                    return (
-                      <option key={i} value={key}>
-                        {key}
-                      </option>
-                    );
+              </div>
+            </div>
+            <div className="space-y-2 p-3 bg-gray-100 rounded-md border border-gray-300">
+              <div>Criteria: </div>
+              <div className="flex flex-wrap gap-2">
+                {k_array.map((key, i) => {
+                  return (
+                    <button
+                      key={i}
+                      onClick={() => setCriteria(key as k_type)}
+                      className={`flex-1 min-w-[120px] px-4 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
+                        key === criteria
+                          ? "bg-indigo-600 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                      }`}
+                    >
+                      {key}
+                    </button>
+                  );
                 })}
-            </select>
-            <div> Department: </div>
-            <select
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
-              onChange={({ target }) => {
-                setDepartment(target.value);
-              }}
-            >
-              <option value={`${department}`}>{department}</option>
-              {departments
-                ?.filter((key) => key)
-                .map((key, i) => {
-                  if (key !== department)
-                    return (
-                      <option key={i} value={key}>
-                        {key}
+              </div>
+            </div>
+            {accessLevel.level > 49 && (
+              <>
+                <div> Department: </div>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                  onChange={({ target }) => {
+                    setDepartment(target.value);
+                  }}
+                >
+                  <option value={`${department}`} defaultValue={department}>
+                    {department}
+                  </option>
+                  {departments
+                    ?.filter((key) => key)
+                    .map((key, i) => {
+                      if (key !== department)
+                        return (
+                          <option key={i} value={key}>
+                            {key}
+                          </option>
+                        );
+                    })}
+                </select>
+                {accessLevel.level > 59 && (
+                  <>
+                    <div> Faculty: </div>
+                    <select
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                      onChange={({ target }) => {
+                        setFaculty(target.value as FACULTY);
+                      }}
+                    >
+                      <option value={`${faculty}`} defaultValue={faculty}>
+                        {faculty}
                       </option>
-                    );
-                })}
-            </select>
+                      {facultyKeys
+                        ?.filter((key) => key)
+                        .map((key, i) => {
+                          if (key !== faculty)
+                            return (
+                              <option key={i} value={key}>
+                                {key}
+                              </option>
+                            );
+                        })}
+                    </select>
+                  </>
+                )}
+              </>
+            )}
           </div>
           <div className="flex justify-center">
             <button

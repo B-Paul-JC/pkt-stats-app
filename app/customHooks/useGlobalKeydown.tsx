@@ -15,6 +15,18 @@ export const useGlobalKeydown = (): void => {
     );
 
     if (event.key === "k") {
+      if (store.isLoggedIn) {
+        // If logging out, set user level to VISITOR
+        store.setAccessLevel(ACCESS_LEVELS["VISITOR"]);
+        store.setAppRole("VISITOR");
+      }
+      if (!store.isLoggedIn) {
+        // If logging in from VISITOR, set user level to STUDENT
+        if (store.appRole === "VISITOR") {
+          store.setAccessLevel(ACCESS_LEVELS["STUDENT"]);
+          store.setAppRole("STUDENT");
+        }
+      }
       store.setIsLoggedIn(!store.isLoggedIn);
     }
     if (event.key === ";") {
@@ -28,11 +40,20 @@ export const useGlobalKeydown = (): void => {
         "PROVOST",
         "ADMIN",
         "VC",
-      ]; // adjust to your app's defined access tiers
+      ];
+
       const idx = roles.indexOf(currentRole);
       const nextRole =
         idx === -1 || idx === roles.length - 1 ? roles[0] : roles[idx + 1];
       const accessLevel = ACCESS_LEVELS[nextRole];
+
+      if (currentRole === "VISITOR") {
+        // If switching from VISITOR, mimic user login
+        store.setIsLoggedIn(true);
+      } else if (nextRole === "VISITOR") {
+        // If switching to VISITOR, mimic user logout
+        store.setIsLoggedIn(false);
+      }
 
       store.setAppRole(nextRole);
       store.setAccessLevel(accessLevel);

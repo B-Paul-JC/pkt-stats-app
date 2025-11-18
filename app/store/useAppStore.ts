@@ -159,6 +159,9 @@ export type FACULTY =
   | "Technology"
   | "Veterinary Medicine";
 
+export type s_type = "Postgraduate" | "Undergraduate" | "International";
+export type STAFF_TYPE = "Academic" | "Non-Academic";
+export type k_type = "All" | "Staff" | "Student" | s_type | STAFF_TYPE;
 export interface IAppStoreVariables {
   // --- STATE ---
   // Store the raw data from your JSON files
@@ -167,16 +170,16 @@ export interface IAppStoreVariables {
   appRole: AppRole;
   isLoggedIn: boolean;
   accessLevel: IAccessLevel;
-  focus:
-    | { value: string; display: string }
-    | { value: ""; display: "Select a focus..." };
+  focus: { value: string; display: string };
   keyValue: "" | string;
   modalTop: "0vh" | "-100vh";
   faculty: FACULTY;
   department: string;
+  criteria: k_type;
   year: string | Date;
   departments: string[];
 }
+
 export interface IAppStoreActions {
   // --- ACTIONS ---
   // Functions to update the state
@@ -188,20 +191,23 @@ export interface IAppStoreActions {
   setFaculty: (faculty: FACULTY) => void;
   setDepartment: (department: string) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
+  setCriteria: (keyType: k_type) => void;
   reset: () => void;
 }
+
 export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
 
 const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   cdata: sdatasets, // Load initial data
   isLoggedIn: false,
-  appRole: "STUDENT",
-  accessLevel: ACCESS_LEVELS["STUDENT"],
+  appRole: "ADMIN",
+  accessLevel: ACCESS_LEVELS["ADMIN"],
   year: "",
   focus: { value: "", display: "Select a focus..." }, // No year selected by default
   keyValue: "",
   faculty: "All",
+  criteria: "All",
   modalTop: "-100vh",
   department: DEPARTMENTS["All"][0],
   departments: DEPARTMENTS["All"],
@@ -213,6 +219,9 @@ export const useAppStore = create<IAppStore>((set) => ({
   reset: () => set({ ...INITIAL_STATE }),
   setAppRole(appRole) {
     set({ appRole });
+  },
+  setCriteria(keyType) {
+    set({ criteria: keyType });
   },
   setAccessLevel(accessLevel) {
     set({ accessLevel });
