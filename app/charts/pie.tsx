@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  type PieLabelRenderProps,
-} from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import { useAppStore } from "~/store/useAppStore";
 
 // sample data
@@ -17,7 +10,6 @@ const data = [
   { name: "Group D", value: 200, fill: "#FF8042" },
 ];
 
-const RADIAN = Math.PI / 180;
 const COLORS = [
   "#0088FE",
   "#00C49F",
@@ -31,7 +23,7 @@ const COLORS = [
 
 export const PieCT = () => {
   const cdata = useAppStore((state) => state.cdata);
-  const selectedType = useAppStore((state) => state.selectedType);
+  const focus = useAppStore((state) => state.focus);
   const keyValue = useAppStore((state) => state.keyValue);
   const faculty = useAppStore((state) => state.faculty);
   const [finalData, setFinalData] = useState(data);
@@ -39,35 +31,46 @@ export const PieCT = () => {
   useEffect(() => {
     if (keyValue === "faculty") {
       const udata = (
-        typeof cdata === "object" &&
-        cdata !== null &&
-        selectedType.value in cdata
-          ? cdata[selectedType.value as keyof typeof cdata]
+        typeof cdata === "object" && cdata !== null && focus.value in cdata
+          ? cdata[focus.value as keyof typeof cdata]
           : data
       ) as any[];
 
-      const filteredData = udata.filter(
-        (item) => item.Faculty === faculty
-      )[0] as any;
-      filteredData.Faculty = "";
+      if (!focus.value) {
+        setFinalData(data);
+        return;
+      }
 
-      const { Faculty, ...intermediateData } = filteredData;
-      const fData = Object.entries(intermediateData).map(([key, value], i) => {
-        // The structure you want for each item in the final array
-        return {
-          name: key,
-          value: value,
-          fill: COLORS[i],
-        };
-      }) as { name: string; value: number; fill: string }[];
+      const uData = udata.map((item: { [x: string]: any }) => {
+        if (item.Faculty === faculty) {
+          const { Faculty, ...others } = item;
+          return others;
+        } else {
+          return null;
+        }
+      }) as { [x: string]: any };
+
+      const iData = uData.filter(Boolean);
+
+      const filteredData = iData.length < 1 ? {} : (iData[0] as any);
+
+      const fData = Object.entries(filteredData).map(([name, value], i) => ({
+        name,
+        value,
+        fill: COLORS[i],
+      })) as { name: string; value: number; fill: string }[];
+
+      console.log(filteredData);
       setFinalData(fData);
     }
-    if (keyValue === "students" || "staff" || "accomodation") {
+    if (
+      keyValue === "students" ||
+      keyValue === "staff" ||
+      keyValue === "accomodation"
+    ) {
       const udata = (
-        typeof cdata === "object" &&
-        cdata !== null &&
-        selectedType.value in cdata
-          ? cdata[selectedType.value as keyof typeof cdata]
+        typeof cdata === "object" && cdata !== null && focus.value in cdata
+          ? cdata[focus.value as keyof typeof cdata]
           : data
       ) as any[];
 
@@ -79,11 +82,10 @@ export const PieCT = () => {
         );
         return { name: Year, value: total, fill: COLORS[i] };
       }) as any[];
-      console.log({ udata, uData, selectedType, keyValue });
 
       setFinalData(uData);
     }
-  }, [keyValue, selectedType, cdata, faculty]);
+  }, [keyValue, focus, cdata, faculty]);
 
   return (
     <ResponsiveContainer width="90%" height={300}>
@@ -99,7 +101,7 @@ export const PieCT = () => {
           label
           labelLine={true}
         >
-          {data.map((entry, index) => (
+          {finalData.map((entry, index) => (
             <Cell
               key={`cell-${entry.name}`}
               fill={COLORS[index % COLORS.length]}

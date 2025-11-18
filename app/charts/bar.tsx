@@ -57,10 +57,27 @@ const data = [
   },
 ];
 
+const CustomizedAxisTick = ({ x, y, payload }: any) => {
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="end"
+        fill="#666"
+        transform="rotate(-35)"
+      >
+        {payload.value}
+      </text>
+    </g>
+  );
+};
+
 // #endregion
 export const SimpleBarChart = () => {
   const cdata = useAppStore((state) => state.cdata);
-  const selectedType = useAppStore((state) => state.selectedType);
+  const focus = useAppStore((state) => state.focus);
   const keyValue = useAppStore((state) => state.keyValue);
   const [finalData, setFinalData] = useState(data as any[]);
 
@@ -69,14 +86,14 @@ export const SimpleBarChart = () => {
       const udata = (
         typeof cdata === "object" &&
         cdata !== null &&
-        selectedType.value in cdata
-          ? cdata[selectedType.value as keyof typeof cdata]
+        focus.value in cdata
+          ? cdata[focus.value as keyof typeof cdata]
           : data
       ) as any[];
 
       setFinalData(udata);
     }
-  }, [cdata, selectedType, keyValue]);
+  }, [cdata, focus, keyValue]);
 
   return (
     <BarChart
@@ -97,7 +114,7 @@ export const SimpleBarChart = () => {
       }}
     >
       <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey={Object.keys(finalData[0] || {})[0]} />
+      <XAxis dataKey={Object.keys(finalData[0] || {})[0]} tick={CustomizedAxisTick} height={60} />
       <YAxis width="auto" />
       <Tooltip />
       <Legend />

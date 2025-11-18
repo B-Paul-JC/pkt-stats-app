@@ -2,7 +2,7 @@ import { Link, useParams } from "react-router";
 import type { Route } from "./+types/home";
 import { FiArrowLeft } from "react-icons/fi";
 import { PieCT } from "../charts/pie";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { SimpleBarChart } from "~/charts/bar";
 import { StackedAreaChart } from "~/charts/range";
 import { GeneralInfo } from "~/analytics/generalInfo";
@@ -10,6 +10,7 @@ import { BottomDrawer } from "~/analytics/mobileDrawer";
 import { EditLogic } from "~/analytics/editLogic";
 import { LoginModal } from "~/auth/modal";
 import { useAppStore } from "~/store/useAppStore";
+import { ACCESS_LEVELS } from "~/auth/accessLevel";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -23,11 +24,14 @@ export function meta({}: Route.MetaArgs) {
 
 export default function Statistic() {
   const reset = useAppStore((state) => state.reset);
-  const [isOpen, setIsOpen] = useState(false);
   const { sid } = useParams();
 
   const setKeyValue = useAppStore((state) => state.setKeyValue);
-  setKeyValue(sid || "");
+  const appRole = useAppStore((state) => state.appRole);
+
+  useEffect(() => {
+    setKeyValue(sid || "");
+  }, [sid]);
 
   const Cells: ReactNode[] = [
     <StackedAreaChart />,
@@ -39,12 +43,7 @@ export default function Statistic() {
 
   return (
     <>
-      <LoginModal
-        isOpen={isOpen}
-        onClose={() => {
-          setIsOpen(false);
-        }}
-      />
+      <LoginModal />
       <Link
         to="/"
         onClick={reset}
@@ -55,8 +54,12 @@ export default function Statistic() {
 
       <div className="anim-in-view fixed z-30 p-3 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 h-11/12 bg-blue-100 overflow-scroll sm:overflow-clip rounded-2xl bg-opacity-90 shadow-2xl transition-all duration-700 opacity-0 scale-95 animate-fade-in">
         <div className="flex-row sm:grid grid-cols-8 grid-rows-8 gap-4 p-4 items-center h-full">
-          <div className="row-span-1 mb-4 sm:mb-0 sm:h-full bg-white p-4 rounded shadow col-span-2 items-center flex">
-            <h2 className="font-bold capitalize">{sid} Statistics</h2>
+          <div className="row-span-1 mb-4 sm:mb-0 sm:h-full bg-white p-4 rounded shadow col-span-2 items-center flex-col">
+            <h3 className="font-bold capitalize flex flex-row justify-between items-center">
+              <span>{sid} Statistics</span>{" "}
+              <span className="text-indigo-600 font-bold font-mono">{`${ACCESS_LEVELS[appRole].title.toLocaleUpperCase()}`}</span>
+            </h3>
+            <h5 className="text-sm italic">{`${ACCESS_LEVELS[appRole].description}`}</h5>
           </div>
           {Array.from({ length: 2 }).map((_, index) => (
             <div
@@ -77,7 +80,7 @@ export default function Statistic() {
           </div>
         </div>
       </div>
-      <BottomDrawer defunct={setIsOpen} />
+      <BottomDrawer />
     </>
   );
 }

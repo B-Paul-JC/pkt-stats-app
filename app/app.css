@@ -15,14 +15,6 @@ body {
   }
 }
 
-@media (max-width: 639px) {
-  html,
-  body {
-    background-image: url("/graph-bg.gif");
-    background-attachment: fixed;
-    background-size: contain;
-  }
-}
 /* Styling the main container (my-masonry-grid) */
 .my-masonry-grid {
   display: flex;

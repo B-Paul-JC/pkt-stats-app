@@ -1,31 +1,22 @@
 import React, { useEffect, useState } from "react";
+import { useAppStore } from "~/store/useAppStore";
 
-export const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
-  isOpen,
-  onClose,
-}) => {
+export const LoginModal = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [top, setTop] = useState("-100vh");
+  const modalTop = useAppStore((state) => state.modalTop);
+  const toggleModalTop = useAppStore((state) => state.toggleModalTop);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     // Handle login logic here
-    onClose(); // Close modal after login
+    toggleModalTop(); // Close modal after login
   };
-
-  useEffect(() => {
-    if (isOpen) {
-      setTop("0");
-    } else {
-      setTop("-100vh");
-    }
-  }, [isOpen]);
 
   return (
     <div
       className="fixed inset-0 flex items-center justify-center bg-transparent backdrop-blur-2xl duration-500 z-50 h-dvh w-screen left-0 transition-top"
-      style={{ top: top }}
+      style={{ top: modalTop }}
     >
       <div className="bg-white rounded-lg shadow-lg p-6 w-96">
         <h2 className="text-xl font-semibold mb-4">Login</h2>
@@ -62,11 +53,11 @@ export const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               onClick={() => {
                 setPassword("");
                 setEmail("");
-                onClose();
+                toggleModalTop();
               }}
               className="text-gray-700 rounded-md px-4 py-2 cursor-pointer hover:bg-red-400 hover:text-white duration-150 active:bg-red-600"
             >
-              Cancel
+              Close
             </button>
           </div>
         </form>

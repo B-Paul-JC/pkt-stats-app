@@ -3,6 +3,11 @@ import students from "~/dummyData/students.json";
 import staff from "~/dummyData/staff.json";
 import faculty from "~/dummyData/faculty.json";
 import accomodation from "~/dummyData/accomodation.json";
+import {
+  ACCESS_LEVELS,
+  type AppRole,
+  type IAccessLevel,
+} from "~/auth/accessLevel";
 
 const sdatasets: Record<string, any> = {
   students,
@@ -12,6 +17,7 @@ const sdatasets: Record<string, any> = {
 };
 
 const DEPARTMENTS: Record<FACULTY, string[]> = {
+  All: ["All"],
   Agriculture: [
     "Agricultural Economics",
     "Agricultural Extension and Rural Development",
@@ -136,6 +142,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
 export type IChartDataPoint = Record<string, any>;
 export type IChartDataPointObj = Record<string, IChartDataPoint[]>;
 export type FACULTY =
+  | "All"
   | "Agriculture"
   | "Arts"
   | "Basic Medical Sciences"
@@ -157,18 +164,25 @@ export interface IAppStoreVariables {
   // Store the raw data from your JSON files
   cdata: IChartDataPointObj | IChartDataPoint[];
   // Store the user's filter selection
-  selectedType:
+  appRole: AppRole;
+  accessLevel: IAccessLevel;
+  focus:
     | { value: string; display: string }
-    | { value: ""; display: "Select a type..." };
+    | { value: ""; display: "Select a focus..." };
   keyValue: "" | string;
+  modalTop: "0vh" | "-100vh";
   faculty: FACULTY;
   department: string;
+  year: string | Date;
   departments: string[];
 }
 export interface IAppStoreActions {
   // --- ACTIONS ---
   // Functions to update the state
-  setSelectedType: (type: string | null) => void;
+  setFocus: (type: string | null) => void;
+  setAppRole: (role: AppRole) => void;
+  toggleModalTop: () => void;
+  setAccessLevel: (accessLevel: IAccessLevel) => void;
   setKeyValue: (keyValue: string) => void;
   setFaculty: (faculty: FACULTY) => void;
   setDepartment: (department: string) => void;
@@ -179,20 +193,30 @@ export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
 const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   cdata: sdatasets, // Load initial data
-  selectedType: { value: "", display: "Select a type..." }, // No year selected by default
+  appRole: "STUDENT",
+  accessLevel: ACCESS_LEVELS["STUDENT"],
+  year: "",
+  focus: { value: "", display: "Select a focus..." }, // No year selected by default
   keyValue: "",
-  faculty: "Arts",
-  department: DEPARTMENTS["Arts"][0],
-  departments: DEPARTMENTS["Arts"],
+  faculty: "All",
+  modalTop: "-100vh",
+  department: DEPARTMENTS["All"][0],
+  departments: DEPARTMENTS["All"],
 };
 
 export const useAppStore = create<IAppStore>((set) => ({
   // --- ACTIONS ---
   // This is how you define a function that updates the state
   reset: () => set({ ...INITIAL_STATE }),
-  setSelectedType: (type: any) =>
+  setAppRole(appRole) {
+    set({ appRole });
+  },
+  setAccessLevel(accessLevel) {
+    set({ accessLevel });
+  },
+  setFocus: (type: any) =>
     set({
-      selectedType: {
+      focus: {
         value: type,
         display: type
           .replace(/([A-Z])/g, " $1")
@@ -200,6 +224,15 @@ export const useAppStore = create<IAppStore>((set) => ({
           .replace(/^./, (str: string) => str.toUpperCase()),
       },
     }),
+  toggleModalTop() {
+    set((turnip) => {
+      let newModalTop: IAppStoreVariables["modalTop"] = "-100vh";
+      if (turnip.modalTop === "-100vh") {
+        newModalTop = "0vh";
+      }
+      return { ...turnip, modalTop: newModalTop };
+    });
+  },
   setFaculty(faculty) {
     set({
       faculty,

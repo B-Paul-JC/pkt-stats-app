@@ -13,7 +13,7 @@ interface ButtonItem {
 
 const TopTextButton: React.FC<{
   button: ButtonItem;
-  disp: "none" | "absolute";
+  disp: "disable" | "absolute";
 }> = ({ button, disp }) => {
   const [leftPos, setLeftPos] = useState<string>(`${button.randomX}%`);
   const [topPos, setTopPos] = useState<string>(`${button.randomY}%`);
@@ -30,7 +30,7 @@ const TopTextButton: React.FC<{
   return (
     // Button container is centered on its random point
     <div
-      style={{ left: leftPos, top: topPos, display: disp }}
+      style={{ left: leftPos, top: topPos }}
       className="group absolute w-20 h-20 -translate-x-1/2 -translate-y-1/2 z-30 cursor-pointer transition-all duration-800"
     >
       {/* --- Text Positioned Above the Circle --- */}
@@ -42,15 +42,16 @@ const TopTextButton: React.FC<{
       </div>
 
       {/* --- Circular Button (Fixed Size) --- */}
-      <NavLink to={`/${button.label.toLowerCase()}`}>
+      <NavLink
+        to={`/${disp === "absolute" ? "statistic/"+button.label.toLowerCase() : "under-construction"}`}
+      >
         <button
           className={`
             w-20 h-20 md:w-15 md:h-15 rounded-full
             flex items-center justify-center
             shadow-lg focus:outline-none
-            animate-bounce cursor-pointer
             transition-all duration-300
-            ${button.color || "bg-amber-200 hover:bg-indigo-700"}
+            ${disp === "absolute" ? button.color || "animate-bounce cursor-pointer bg-amber-200 hover:bg-indigo-700" : "bg-gray-600 hover:bg-gray-700 cursor-not-allowed"}
           `}
           onClick={(e) => {
             const { clientX, clientY } = e;
@@ -60,9 +61,7 @@ const TopTextButton: React.FC<{
             );
           }}
           style={{ animationDelay: `${+button.id * 120}ms` }}
-        >
-          {/* The circle no longer has an arrow */}
-        </button>
+        ></button>
       </NavLink>
     </div>
   );
@@ -78,9 +77,11 @@ const RandomGrid: React.FC<{ buttons: ButtonItem[] }> = ({ buttons }) => {
           key={button.id}
           button={button}
           disp={
-            ["Students", "Staff", "Accomodation", "Faculty"].includes(button.label)
+            ["Students", "Staff", "Accomodation", "Faculty"].includes(
+              button.label
+            )
               ? "absolute"
-              : "none"
+              : "disable"
           }
         />
       ))}

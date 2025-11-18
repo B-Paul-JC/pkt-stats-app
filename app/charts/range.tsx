@@ -22,7 +22,7 @@ const data = [
 
 export const StackedAreaChart = () => {
   const cdata = useAppStore((state) => state.cdata);
-  const selectedType = useAppStore((state) => state.selectedType);
+  const focus = useAppStore((state) => state.focus);
   const keyValue = useAppStore((state) => state.keyValue);
   const [finalData, setFinalData] = useState(data as any[]);
 
@@ -31,15 +31,15 @@ export const StackedAreaChart = () => {
       const udata = (
         typeof cdata === "object" &&
         cdata !== null &&
-        selectedType.value in cdata
-          ? cdata[selectedType.value as keyof typeof cdata]
+        focus.value in cdata
+          ? cdata[focus.value as keyof typeof cdata]
           : data
       ) as any[];
 
       setFinalData(udata);
     }
-  }, [cdata, selectedType, keyValue]);
-  
+  }, [cdata, focus, keyValue]);
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart data={finalData}>

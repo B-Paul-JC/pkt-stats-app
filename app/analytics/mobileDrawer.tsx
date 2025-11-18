@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, LockIcon } from "lucide-react"; // Using Lucide
 import { EditLogic } from "./editLogic";
 
 // --- Main Drawer Component ---
-export const BottomDrawer: React.FC<SloppyParams> = ({ defunct }) => {
+export const BottomDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const drawerHeightClasses = "h-[400px]"; // Define the maximum height of the drawer
 
@@ -67,7 +67,7 @@ export const BottomDrawer: React.FC<SloppyParams> = ({ defunct }) => {
 
         {/* --- Drawer Content --- */}
         <div className="p-6 pb-16 h-full overflow-y-auto">
-          <EditLogic defunct={defunct} />
+          <EditLogic />
         </div>
       </motion.div>
     </div>
