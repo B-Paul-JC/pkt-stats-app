@@ -49,38 +49,38 @@ export const ACCESS_LEVELS: Record<AppRole, IAccessLevel> = {
   },
 
   /**
-   * Level 10: Basic authenticated user.
-   * Can see all public stats plus (hypothetically) their own personal stats.
+   * Level 10: Student access.
+   * Can view general public data plus student-specific data (e.g., student enrolment trends).
    */
   STUDENT: {
     level: 10,
     title: "Student",
-    description: "Can view general statistics and personal academic data.",
+    description: "Can view student-specific statistics and public data.",
   },
 
   /**
-   * Level 30: General staff.
-   * Can see internal university-wide stats not available to the public.
+   * Level 20: General staff access.
+   * Can view departmental summary statistics.
    */
   STAFF: {
-    level: 30,
-    title: "Staff",
-    description: "Can view general internal university statistics.",
+    level: 20,
+    title: "General Staff",
+    description: "Can view departmental summary statistics and public data.",
   },
 
   /**
-   * Level 50: Department Head.
-   * Can view all detailed statistics for their specific department.
+   * Level 50: Head of Department (HOD).
+   * Can view all detailed statistics for their department.
    */
   HOD: {
     level: 50,
     title: "Head of Department",
-    description: "Can view all statistics for their specific department.",
+    description: "Can view all detailed statistics for their department.",
   },
 
   /**
-   * Level 60: Faculty Head.
-   * Can view all detailed statistics for all departments within their faculty.
+   * Level 60: Dean of Faculty.
+   * Can view all statistics for their entire faculty.
    */
   DEAN: {
     level: 60,
@@ -121,15 +121,15 @@ export const ACCESS_LEVELS: Record<AppRole, IAccessLevel> = {
 };
 
 /**
- * --- HOW TO USE THIS ---
- * * 1. A user logs in, and you assign them a role (e.g., 'DEAN').
- * 2. You get their access level: const userLevel = ACCESS_LEVELS['DEAN'].level; // userLevel is 60
- * * 3. To protect a component or data, you check their level:
- * const requiredLevel = ACCESS_LEVELS['HOD'].level; // requiredLevel is 50
- * * 4. Show/Hide logic:
- * if (userLevel >= requiredLevel) {
- * // Show the component or fetch the data
- * } else {
- * // Show "Access Denied"
- * }
+ * Maps the AppRole string to its numerical access level.
  */
+export type IAccessLevelMap = {
+  [key in AppRole]: number;
+};
+
+export const ACCESS_LEVEL_MAP: IAccessLevelMap = (
+  Object.keys(ACCESS_LEVELS) as AppRole[]
+).reduce((acc, role) => {
+  acc[role] = ACCESS_LEVELS[role].level;
+  return acc;
+}, {} as IAccessLevelMap);

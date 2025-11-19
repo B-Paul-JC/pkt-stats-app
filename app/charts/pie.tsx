@@ -1,5 +1,5 @@
 import { use, useEffect, useState } from "react";
-import { ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
+import { ResponsiveContainer, PieChart, Pie, Cell, Legend, type PieLabelRenderProps } from "recharts";
 import {
   aggregateAllNumericFields,
   type DataRecord,
@@ -24,6 +24,38 @@ const COLORS = [
   "#9933AA",
   "#AA9933",
 ];
+
+const RADIAN = Math.PI / 180;
+
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+}: PieLabelRenderProps) => {
+  if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
+    return null;
+  }
+  const radius = +innerRadius + (+outerRadius - +innerRadius) * 0.5;
+  const ncx = Number(cx);
+  const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const ncy = Number(cy);
+  const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor={x > ncx ? "start" : "end"}
+      dominantBaseline="central"
+    >
+      {`${(+(percent ?? 1) * 100).toFixed(0)}%`}
+    </text>
+  );
+};
 
 export const PieCT = () => {
   const cdata = useAppStore((state) => state.cdata);
@@ -77,7 +109,6 @@ export const PieCT = () => {
           fill: COLORS[i],
         })) as { name: string; value: number; fill: string }[];
 
-        console.log(filteredData);
         setFinalData(fData);
       }
     }
@@ -109,8 +140,6 @@ export const PieCT = () => {
       //   return { name: Year, value: total, fill: COLORS[i] };
       // }) as any[];
 
-      console.log(reducedData);
-
       setFinalData(fData);
     }
   }, [keyValue, focus, cdata, faculty, criteria]);
@@ -129,7 +158,8 @@ export const PieCT = () => {
           // Corner radius is the rounded edge of each pie slice
           cornerRadius="5%"
           isAnimationActive={true}
-          label={false}
+          label={renderCustomizedLabel}
+          labelLine={false}
         >
           {finalData.map((entry, index) => (
             <Cell

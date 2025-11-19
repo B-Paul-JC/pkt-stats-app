@@ -26,7 +26,9 @@ export default function Statistic() {
   const reset = useAppStore((state) => state.reset);
   const { sid } = useParams();
 
+  const criteria = useAppStore((state) => state.criteria);
   const setKeyValue = useAppStore((state) => state.setKeyValue);
+  const focus = useAppStore((state) => state.focus.display);
   const appRole = useAppStore((state) => state.appRole);
 
   useEffect(() => {
@@ -61,26 +63,28 @@ export default function Statistic() {
             </h3>
             <h5 className="text-sm italic">{`${ACCESS_LEVELS[appRole].description}`}</h5>
           </div>
-          {Array.from({ length: 2 }).map((_, index) => (
-            <div
-              key={index}
-              className="row-span-4 mb-4 sm:mb-0 h-96 sm:h-full bg-white rounded col-span-3 shadow py-6 px-2 sm:p-7 relative flex items-center justify-center"
-            >
-              {Cells[index]}
-            </div>
-          ))}
+
+          <div className="row-span-4 mb-4 sm:mb-0 h-96 sm:h-full bg-white rounded col-span-3 shadow py-6 px-2 sm:p-7 relative flex items-center justify-center">
+            {Cells[0]}
+          </div>
+          <div className="row-span-4 mb-4 sm:mb-0 h-96 sm:h-full bg-white rounded col-span-3 shadow py-6 px-2 sm:p-7 relative flex items-center justify-center">
+            {Cells[1]}
+            <span className="bottom-0 bg-indigo-500 text-white w-full rounded-b text-center absolute">
+              {focus} | {criteria}
+            </span>
+          </div>
           <div className="row-span-7 mb-4 sm:mb-0 h-96 sm:h-full col-span-2 bg-white p-4 pt-11 rounded shadow justify-center-safe hidden sm:flex">
             {Cells[2]}
           </div>
-          <div className="row-span-4 col-span-4 h-96 mb-4 sm:mb-0 sm:h-full bg-white rounded shadow p-7 relative flex items-center justify-center">
+          <div className="row-span-4 col-span-6 h-96 mb-4 sm:mb-0 sm:h-full bg-white rounded shadow p-7 relative flex items-center justify-center">
             {Cells[3]}
           </div>
-          <div className="row-span-4 col-span-2 h-96 mb-4 sm:mb-0 sm:h-full bg-white rounded shadow p-7 relative flex items-center justify-center">
+          {/* <div className="row-span-4 col-span-2 h-96 mb-4 sm:mb-0 sm:h-full bg-white rounded shadow p-7 relative flex items-center justify-center">
             {Cells[4]}
-          </div>
+          </div> */}
         </div>
       </div>
-      <div className="fixed bottom-6 right-6 bg-gray-800 text-white text-sm rounded-lg p-3 shadow-lg max-w-xs z-40">
+      <div className="fixed bottom-6 right-6 bg-gray-800 text-white text-sm hidden sm:block rounded-lg p-3 shadow-lg max-w-xs z-40">
         <p className="mb-1">
           Click{" "}
           <span className="font-semibold bg-gray-500 font-mono rounded p-2 shadow-gray-500 shadow-2xl">

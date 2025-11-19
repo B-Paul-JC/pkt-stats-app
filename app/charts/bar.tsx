@@ -99,7 +99,7 @@ export const SimpleBarChart = () => {
       style={{
         width: "100%",
         height: "100%",
-        maxWidth: "600px",
+        maxWidth: "920px",
         maxHeight: "90vh",
         aspectRatio: 1.618,
       }}

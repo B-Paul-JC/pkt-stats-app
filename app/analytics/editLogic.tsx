@@ -4,11 +4,6 @@ import { useAppStore, type FACULTY, type k_type } from "~/store/useAppStore";
 
 export const EditLogic = () => {
   const isLoggedIn = useAppStore((state) => state.isLoggedIn);
-  const setIsLoggedIn = useAppStore((state) => state.setIsLoggedIn);
-  // Replace with actual authentication logic
-  const onLogin = () => {
-    // Implement your login logic here
-  };
   const focus = useAppStore((state) => state.focus);
   const setFocus = useAppStore((state) => state.setFocus);
   const department = useAppStore((state) => state.department);
@@ -20,6 +15,7 @@ export const EditLogic = () => {
   const criteria = useAppStore((state) => state.criteria);
   const setCriteria = useAppStore((state) => state.setCriteria);
   const keyValue = useAppStore((state) => state.keyValue);
+  const logout = useAppStore((state) => state.logout);
   const cdata = useAppStore((state) => state.cdata);
   const accessLevel = useAppStore((state) => state.accessLevel);
 
@@ -44,7 +40,9 @@ export const EditLogic = () => {
   const k_array = Array.isArray(focusData)
     ? Object.keys(focusData[0] || {}).slice(1)
     : [];
+
   const firstKey = k_array[0];
+
   useEffect(() => {
     if (keys && keys.length > 0 && !keys.includes(focus.value)) {
       setFocus(keys[0]);
@@ -202,7 +200,8 @@ export const EditLogic = () => {
           <div className="flex justify-center">
             <button
               onClick={() => {
-                setIsLoggedIn(true);
+                logout();
+                window.location.reload();
               }}
               className="mt-2 px-3 py-1 bg-red-500 text-white text-sm rounded hover:bg-red-600 cursor-pointer"
             >

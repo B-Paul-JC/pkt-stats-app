@@ -7,6 +7,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Line,
 } from "recharts";
 import { useAppStore } from "~/store/useAppStore";
 
@@ -71,18 +72,17 @@ export const StackedAreaChart = () => {
           .slice(1, 6)
           .map((key, index) => {
             const colors = [
-              "#8884d8",
-              "#82ca9d",
-              "#ffc658",
-              "#ff7c7c",
-              "#8dd1e1",
+              "#347474", // Deep Blue
+              "#82B366", // Forest Green
+              "#F8B12E", // Warm Gold
+              "#B565A7", // Dusty Rose
+              "#4D9EAD", // Sky Teal
             ];
             return (
-              <Area
+              <Line
                 key={key}
                 type="monotone"
                 dataKey={key}
-                stackId="1"
                 stroke={colors[index]}
                 fill={colors[index]}
               />

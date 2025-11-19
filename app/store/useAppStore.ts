@@ -8,6 +8,11 @@ import {
   type AppRole,
   type IAccessLevel,
 } from "~/auth/accessLevel";
+import {
+  loadUserFromLocalStorage as LUFLS,
+  USER_STORAGE_KEY,
+  type USER,
+} from "~/auth/userSimulation";
 
 const sdatasets: Record<string, any> = {
   students,
@@ -162,12 +167,21 @@ export type FACULTY =
 export type s_type = "Postgraduate" | "Undergraduate" | "International";
 export type STAFF_TYPE = "Academic" | "Non-Academic";
 export type k_type = "All" | "Staff" | "Student" | s_type | STAFF_TYPE;
+
+interface UserProfile {
+  uid: string;
+  email: string;
+  userType: "ADMIN" | "STAFF" | "STUDENT" | "GUEST";
+  displayName: string;
+}
+
 export interface IAppStoreVariables {
   // --- STATE ---
   // Store the raw data from your JSON files
   cdata: IChartDataPointObj | IChartDataPoint[];
   // Store the user's filter selection
   appRole: AppRole;
+  userProfile: USER | null; // The authenticated user's details
   isLoggedIn: boolean;
   accessLevel: IAccessLevel;
   focus: { value: string; display: string };
@@ -183,6 +197,7 @@ export interface IAppStoreVariables {
 export interface IAppStoreActions {
   // --- ACTIONS ---
   // Functions to update the state
+  setAuthenticatedUser: (user: USER) => void;
   setFocus: (type: string | null) => void;
   setAppRole: (role: AppRole) => void;
   toggleModalTop: () => void;
@@ -193,6 +208,7 @@ export interface IAppStoreActions {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setCriteria: (keyType: k_type) => void;
   reset: () => void;
+  logout: () => void;
 }
 
 export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
@@ -200,9 +216,13 @@ export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
 const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   cdata: sdatasets, // Load initial data
-  isLoggedIn: false,
-  appRole: "ADMIN",
-  accessLevel: ACCESS_LEVELS["ADMIN"],
+  // Auth Initial State (Hydrated from Local Storage)
+  userProfile: LUFLS(),
+  isLoggedIn: !!LUFLS(),
+  appRole: LUFLS() ? LUFLS().userType : "VISITOR",
+  accessLevel: LUFLS()
+    ? ACCESS_LEVELS[LUFLS().userType as string as AppRole]
+    : ACCESS_LEVELS["VISITOR"],
   year: "",
   focus: { value: "", display: "Select a focus..." }, // No year selected by default
   keyValue: "",
@@ -217,6 +237,24 @@ export const useAppStore = create<IAppStore>((set) => ({
   // --- ACTIONS ---
   // This is how you define a function that updates the state
   reset: () => set({ ...INITIAL_STATE }),
+  // --- AUTHENTICATION ACTIONS ---
+  setAuthenticatedUser: (user: USER) =>
+    set({
+      userProfile: user,
+      isLoggedIn: true,
+      accessLevel: ACCESS_LEVELS[user.userType],
+      appRole: user.userType,
+    }),
+  logout: () => {
+    localStorage.removeItem(USER_STORAGE_KEY);
+    set({
+      ...INITIAL_STATE,
+      userProfile: null,
+      isLoggedIn: false,
+      appRole: "VISITOR",
+      accessLevel: ACCESS_LEVELS["VISITOR"],
+    });
+  },
   setAppRole(appRole) {
     set({ appRole });
   },
@@ -226,8 +264,13 @@ export const useAppStore = create<IAppStore>((set) => ({
   setAccessLevel(accessLevel) {
     set({ accessLevel });
   },
-  setFocus: (type: any) =>
-    set({
+  setFocus: (type: any) => {
+    if (type === "") {
+      return set({
+        focus: { value: "", display: "Select a focus..." },
+      });
+    }
+    return set({
       focus: {
         value: type,
         display: type
@@ -235,7 +278,8 @@ export const useAppStore = create<IAppStore>((set) => ({
           .trim()
           .replace(/^./, (str: string) => str.toUpperCase()),
       },
-    }),
+    });
+  },
   setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
   toggleModalTop() {
     set((turnip) => {
