@@ -5,7 +5,7 @@ import React, { useState, useEffect } from "react";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "University of Ibadan Pocket Statistics" },
+    { title: "University of Ibadan Info Statistics" },
     {
       name: "description",
       content: "View the current statistical data for the Univeristy of Ibadan",

@@ -1,107 +1,74 @@
-import { Link, useParams } from "react-router";
-import type { Route } from "./+types/home";
-import { FiArrowLeft } from "react-icons/fi";
-import { PieCT } from "../charts/pie";
-import { useEffect, useState, type ReactNode } from "react";
-import { SimpleBarChart } from "~/charts/bar";
-import { StackedAreaChart } from "~/charts/range";
-import { GeneralInfo } from "~/analytics/generalInfo";
-import { BottomDrawer } from "~/analytics/mobileDrawer";
-import { EditLogic } from "~/analytics/editLogic";
-import { LoginModal } from "~/auth/modal";
-import { useAppStore } from "~/store/useAppStore";
-import { ACCESS_LEVELS } from "~/auth/accessLevel";
+import React, { useState } from "react";
+import { ChevronLeft, ChevronRight, Image } from "lucide-react";
+import type { Route } from "../routes/+types/statistic";
+import { NavigationButton } from "~/statistics/navigationButton";
+import { imagePages } from "~/statistics/images";
+import { Header } from "~/statistics/header";
+import { ImageCarousel } from "~/statistics/imageDisplay";
+
+const modulus = (dividend: number, divisor: number): number => {
+  const remainder = dividend % divisor;
+
+  if (remainder < 0) {
+    return remainder + divisor;
+  }
+
+  return remainder;
+};
+
+const PDFViewer: React.FC = () => {
+  // Constants now derived from the image array
+  const documentFileName: string = "University Statistics Report";
+  const totalPages: number = imagePages.length;
+
+  // State: currentPage is 1-indexed for display
+  const [currentPage, setCurrentPage] = useState<number>(0);
+
+  // Navigation handlers
+  const goToPrev = () => {
+    setCurrentPage((prev) => modulus(prev - 1, totalPages - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentPage((prev) => modulus(prev + 1, totalPages - 1));
+  };
+
+  // Get the current image source (array is 0-indexed, state is 1-indexed)
+  const currentImageSrc = imagePages[currentPage];
+
+  return (
+    <div className="flex flex-col h-screen w-full bg-white font-sans p-4 sm:p-8">
+      <Header {...{ documentFileName, currentPage, totalPages }} />
+
+      <ImageCarousel
+        {...{ currentImageSrc, currentPage, goToPrev, goToNext, totalPages }}
+      />
+
+      {/* Custom Tailwind Animation CSS */}
+      <style>
+        {`
+          .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0.5; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+          }
+        `}
+      </style>
+    </div>
+  );
+};
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "University of Ibadan Pocket Statistics" },
+    { title: "University of Ibadan Info Statistics Carousel" },
     {
       name: "description",
-      content: "View the current statistical data for the Univeristy of Ibadan",
+      content:
+        "View the current statistical data for the Univeristy of Ibadan in a sleek image carousel.",
     },
   ];
 }
 
-export default function Statistic() {
-  const reset = useAppStore((state) => state.reset);
-  const { sid } = useParams();
-
-  const criteria = useAppStore((state) => state.criteria);
-  const setKeyValue = useAppStore((state) => state.setKeyValue);
-  const focus = useAppStore((state) => state.focus.display);
-  const appRole = useAppStore((state) => state.appRole);
-
-  useEffect(() => {
-    setKeyValue(sid || "");
-  }, [sid]);
-
-  const Cells: ReactNode[] = [
-    <StackedAreaChart />,
-    <PieCT />,
-    <EditLogic />,
-    <SimpleBarChart />,
-    <GeneralInfo />,
-  ];
-
-  return (
-    <>
-      <LoginModal />
-      <Link
-        to="/"
-        onClick={reset}
-        className="fixed top-6 left-6 px-3 py-2 bg-white rounded-full shadow hover:bg-gray-100 z-200 cursor-pointer"
-      >
-        <FiArrowLeft />
-      </Link>
-
-      <div className="anim-in-view fixed z-30 p-3 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11/12 h-11/12 bg-blue-100 overflow-scroll sm:overflow-clip rounded-2xl bg-opacity-90 shadow-2xl transition-all duration-700 opacity-0 scale-95 animate-fade-in">
-        <div className="flex-row sm:grid grid-cols-8 grid-rows-8 gap-4 p-4 items-center h-full">
-          <div className="row-span-1 mb-4 sm:mb-0 sm:h-full bg-white p-4 rounded shadow col-span-2 items-center flex-col">
-            <h3 className="font-bold capitalize flex flex-row justify-between items-center">
-              <span>{sid} Statistics</span>{" "}
-              <span className="text-indigo-600 font-bold font-mono">{`${ACCESS_LEVELS[appRole].title.toLocaleUpperCase()}`}</span>
-            </h3>
-            <h5 className="text-sm italic">{`${ACCESS_LEVELS[appRole].description}`}</h5>
-          </div>
-
-          <div className="row-span-4 mb-4 sm:mb-0 h-96 sm:h-full bg-white rounded col-span-3 shadow py-6 px-2 sm:p-7 relative flex items-center justify-center">
-            {Cells[0]}
-          </div>
-          <div className="row-span-4 mb-4 sm:mb-0 h-96 sm:h-full bg-white rounded col-span-3 shadow py-6 px-2 sm:p-7 relative flex items-center justify-center">
-            {Cells[1]}
-            <span className="bottom-0 bg-indigo-500 text-white w-full rounded-b text-center absolute">
-              {focus} | {criteria}
-            </span>
-          </div>
-          <div className="row-span-7 mb-4 sm:mb-0 h-96 sm:h-full col-span-2 bg-white p-4 pt-11 rounded shadow justify-center-safe hidden sm:flex">
-            {Cells[2]}
-          </div>
-          <div className="row-span-4 col-span-6 h-96 mb-4 sm:mb-0 sm:h-full bg-white rounded shadow p-7 relative flex items-center justify-center">
-            {Cells[3]}
-          </div>
-          {/* <div className="row-span-4 col-span-2 h-96 mb-4 sm:mb-0 sm:h-full bg-white rounded shadow p-7 relative flex items-center justify-center">
-            {Cells[4]}
-          </div> */}
-        </div>
-      </div>
-      <div className="fixed bottom-6 right-6 bg-gray-800 text-white text-sm hidden sm:block rounded-lg p-3 shadow-lg max-w-xs z-40">
-        <p className="mb-1">
-          Click{" "}
-          <span className="font-semibold bg-gray-500 font-mono rounded p-2 shadow-gray-500 shadow-2xl">
-            k
-          </span>{" "}
-          to toggle login status
-        </p>
-        <br />
-        <p>
-          Click{" "}
-          <span className="font-semibold bg-gray-500 font-mono rounded p-2 shadow-gray-500 shadow-2xl">
-            ;
-          </span>{" "}
-          to access different user types
-        </p>
-      </div>
-      <BottomDrawer />
-    </>
-  );
-}
+export default PDFViewer;

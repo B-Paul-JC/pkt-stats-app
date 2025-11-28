@@ -14,6 +14,97 @@ body {
     color-scheme: dark;
   }
 }
+/*
+ * Equivalent CSS Keyframes exported from tailwind.config.js
+ *
+ * These keyframes define the 'Pop In' and 'Glow Pulse' animations.
+ * Note: To achieve the varying color glow from the React component, 
+ * you need to manually define the shadow color using CSS variables.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* 1. Pop In Animation (Fade and Scale) */
+/* -------------------------------------------------------------------------- */
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: translateY(300px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Example usage class: */
+.pop-in-animation {
+  animation: popIn 500ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  /* Start hidden, similar to the Tailwind implementation */
+  opacity: 0;
+  perspective-origin: bottom;
+}
+
+/* -------------------------------------------------------------------------- */
+/* 2. Glow Pulse Animation (Shadow and Subtle Scale) */
+/* -------------------------------------------------------------------------- */
+@keyframes glowPulse {
+  0% {
+    /* Tailwind uses var(--tw-shadow-color). Here we use --glow-color for flexibility. */
+    box-shadow: 4px 4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  14% {
+    box-shadow: 4px 0px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  28% {
+    box-shadow: 4px -4px 2px var(--glow-color, rgba(0, 0, 0, 0.5));
+  }
+  42% {
+    box-shadow: 0px -4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  56% {
+    box-shadow: -4px -4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  70% {
+    box-shadow: -4px 0px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  84% {
+    box-shadow: -4px 4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  90% {
+    box-shadow: 0px 4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+  100% {
+    box-shadow: 4px 4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.sclanim {
+  animation: scale-in 200ms ease-in-out 1;
+  transform: scale(0);
+  animation-fill-mode: forwards;
+}
+
+/* Example usage class: */
+.glow-pulse-indigo {
+  /* This sets the glow color to indigo for the keyframes to use */
+  --glow-color: rgba(245, 158, 11, 0.4);
+  /* animation: glowPulse 300ms ease-in-out infinite; */
+  box-shadow: -4px -4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
+}
+.glow-pulse-amber {
+  /* This sets the glow color to amber */
+  --glow-color: rgba(245, 158, 11, 0.4);
+  animation: glowPulse 2.5s ease-in-out infinite alternate;
+}
 
 /* Styling the main container (my-masonry-grid) */
 .my-masonry-grid {
