@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight, Image } from "lucide-react";
 import type { Route } from "../routes/+types/statistic";
-import { NavigationButton } from "~/statistics/navigationButton";
 import { imagePages } from "~/statistics/images";
 import { Header } from "~/statistics/header";
 import { ImageCarousel } from "~/statistics/imageDisplay";
+import { Download } from "lucide-react";
+import PDF_URL from "~/dummyData/INFOSTATISTIC.pdf";
 
 const modulus = (dividend: number, divisor: number): number => {
   const remainder = dividend % divisor;
@@ -18,7 +18,8 @@ const modulus = (dividend: number, divisor: number): number => {
 
 const PDFViewer: React.FC = () => {
   // Constants now derived from the image array
-  const documentFileName: string = "University Statistics Report";
+  const documentFileName: string =
+    "University of Ibadan Statistics Report 2023";
   const totalPages: number = imagePages.length;
 
   // State: currentPage is 1-indexed for display
@@ -26,11 +27,11 @@ const PDFViewer: React.FC = () => {
 
   // Navigation handlers
   const goToPrev = () => {
-    setCurrentPage((prev) => modulus(prev - 1, totalPages - 1));
+    setCurrentPage((prev) => modulus(prev - 1, totalPages));
   };
 
   const goToNext = () => {
-    setCurrentPage((prev) => modulus(prev + 1, totalPages - 1));
+    setCurrentPage((prev) => modulus(prev + 1, totalPages));
   };
 
   // Get the current image source (array is 0-indexed, state is 1-indexed)
@@ -38,6 +39,19 @@ const PDFViewer: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen w-full bg-white font-sans p-4 sm:p-8">
+      {/* --- FLOATING DOWNLOAD BUTTON --- */}
+      <a
+        href={PDF_URL}
+        download="University_Statistics_Report.pdf"
+        className="fixed bottom-8 right-8 z-50 
+                   flex items-center space-x-2 px-6 py-3 
+                   bg-blue-600 text-white font-bold rounded-full 
+                   shadow-2xl hover:bg-blue-700 transition-all duration-300 
+                   hover:scale-105 transform focus:outline-none focus:ring-4 focus:ring-blue-500/50"
+      >
+        <Download className="w-5 h-5" />
+        <span>Download All</span>
+      </a>
       <Header {...{ documentFileName, currentPage, totalPages }} />
 
       <ImageCarousel

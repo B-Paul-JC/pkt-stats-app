@@ -61,7 +61,7 @@ export const ImageCarousel = ({
       </div>
       <p className="mt-4 text-center text-sm text-gray-500 max-w-6xl mx-auto">
         Report Viewer: Click the side arrows to navigate pages (
-        {currentPage + 1} / {totalPages - 1}).
+        {currentPage + 1} / {totalPages}).
       </p>
     </>
   );

@@ -19,7 +19,7 @@ export const Header = ({
 
       {/* Page Indicator */}
       <div className="text-lg font-bold text-yellow-300 bg-yellow-700/70 px-4 py-1 rounded-full shadow-inner min-w-[120px] text-center">
-        Page {currentPage + 1} of {totalPages - 1}
+        Page {currentPage + 1} of {totalPages}
       </div>
     </div>
   </div>
