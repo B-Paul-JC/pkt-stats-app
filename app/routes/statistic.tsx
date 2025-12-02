@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import type { Route } from "../routes/+types/statistic";
 import { imagePages } from "~/statistics/images";
 import { Header } from "~/statistics/header";
-import { ImageCarousel } from "~/statistics/imageDisplay";
-import { Download } from "lucide-react";
-import PDF_URL from "~/dummyData/INFOSTATISTIC.pdf";
+import { ImageCarousel } from "~/statistics/imageCarousel";
+import { DownloadBtn } from "~/statistics/downloads";
+import { ArrowLeft } from "lucide-react";
+import { Link } from "react-router";
+import { ImageCarouselForMobile } from "~/statistics/carouselForMobile";
 
 const modulus = (dividend: number, divisor: number): number => {
   const remainder = dividend % divisor;
@@ -38,39 +40,36 @@ const PDFViewer: React.FC = () => {
   const currentImageSrc = imagePages[currentPage];
 
   return (
-    <div className="flex flex-col h-screen w-full bg-white font-sans p-4 sm:p-8">
-      {/* --- FLOATING DOWNLOAD BUTTON --- */}
-      <a
-        href={PDF_URL}
-        download="University_Statistics_Report.pdf"
-        className="fixed bottom-8 right-8 z-50 
-                   flex items-center space-x-2 px-6 py-3 
-                   bg-blue-600 text-white font-bold rounded-full 
-                   shadow-2xl hover:bg-blue-700 transition-all duration-300 
-                   hover:scale-105 transform focus:outline-none focus:ring-4 focus:ring-blue-500/50"
-      >
-        <Download className="w-5 h-5" />
-        <span>Download All</span>
-      </a>
-      <Header {...{ documentFileName, currentPage, totalPages }} />
+    <>
+      <div className="flex-col h-screen w-full bg-white font-sans p-4 sm:p-8 hidden sm:flex landscape:hidden sm:landscape:flex">
+        <Link
+          to={"/"}
+          download="University_Statistics_Report.pdf"
+          className="fixed top-8 left-8 z-50 px-6 py-3 
+        bg-yellow-600 text-white rounded-full font-bold 
+        shadow-2xl hover:bg-yellow-700 transition-all duration-100 
+        hover:scale-105 transform active:outline-none active:ring-4 active:ring-yellow-500/50"
+        >
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+        <DownloadBtn text="Download" color="yellow" coords="bottom-8 right-8" />
+        <Header {...{ documentFileName, currentPage, totalPages }} />
 
-      <ImageCarousel
-        {...{ currentImageSrc, currentPage, goToPrev, goToNext, totalPages }}
+        <ImageCarousel
+          {...{ currentImageSrc, currentPage, goToPrev, goToNext }}
+        />
+      </div>
+      <ImageCarouselForMobile
+        {...{
+          currentImageSrc,
+          currentPage,
+          goToPrev,
+          goToNext,
+          totalPages,
+          documentFileName,
+        }}
       />
-
-      {/* Custom Tailwind Animation CSS */}
-      <style>
-        {`
-          .animate-fade-in {
-            animation: fadeIn 0.5s ease-in-out;
-          }
-          @keyframes fadeIn {
-            from { opacity: 0.5; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-          }
-        `}
-      </style>
-    </div>
+    </>
   );
 };
 

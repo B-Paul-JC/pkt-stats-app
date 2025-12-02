@@ -1,29 +1,16 @@
 import { create } from "zustand";
-import students from "~/dummyData/students.json";
-import staff from "~/dummyData/staff.json";
-import faculty from "~/dummyData/faculty.json";
-import accomodation from "~/dummyData/accomodation.json";
-import {
-  ACCESS_LEVELS,
-  type AppRole,
-  type IAccessLevel,
-} from "~/auth/accessLevel";
+import { ACCESS_LEVELS, type AppRole } from "~/auth/accessLevel";
 import {
   loadUserFromLocalStorage as LUFLS,
   USER_STORAGE_KEY,
   type USER,
 } from "~/auth/userSimulation";
-
-const sdatasets: Record<string, any> = {
-  students,
-  staff,
-  faculty,
-  accomodation,
-};
+import type { FACULTY, IAppStore, IAppStoreVariables } from "./appStoreTypes";
 
 const DEPARTMENTS: Record<FACULTY, string[]> = {
   All: ["All"],
   Agriculture: [
+    "All",
     "Agricultural Economics",
     "Agricultural Extension and Rural Development",
     "Agronomy",
@@ -35,6 +22,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Wildlife and Ecotourism Management",
   ],
   Arts: [
+    "All",
     "Arabic and Islamic Studies",
     "Archaeology and Anthropology",
     "Classics",
@@ -43,6 +31,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "European Studies",
   ],
   "Basic Medical Sciences": [
+    "All",
     "Anatomy",
     "Biochemistry",
     "Biomedical Laboratory Sciences",
@@ -55,6 +44,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Virology",
   ],
   "Clinical Sciences": [
+    "All",
     "Anaesthesia",
     "Chemical Pathology",
     "Haematology",
@@ -71,20 +61,23 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Surgery",
   ],
   Computing: [
+    "All",
     "Cyber Security",
     "Software Engineering",
     "Data Science",
     "Information Communication Technology",
   ],
   Dentistry: [
+    "All",
     "Child Oral Health",
     "Oral and Maxillofacial Surgery",
     "Oral Pathology",
     "Periodontology and Community Dentistry",
     "Restorative Dentistry",
   ],
-  Economics: ["Economics"],
+  Economics: ["All", "Economics"],
   Education: [
+    "All",
     "Adult Education",
     "Counselling and Human Development Studies",
     "Educational Management",
@@ -95,12 +88,14 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Special Education",
   ],
   "Environmental Design and Management": [
+    "All",
     "Architecture",
     "Estate Management",
     "Urban and Regional Planning",
   ],
-  Law: ["Public Law", "Private and Property Law"],
+  Law: ["All", "Public Law", "Private and Property Law"],
   Pharmacy: [
+    "All",
     "Pharmaceutical Chemistry",
     "Pharmaceutics and Industrial Pharmacy",
     "Pharmacognosy",
@@ -108,6 +103,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Clinical Pharmacy and Pharmacy Administration",
   ],
   "Public Health": [
+    "All",
     "Health Policy and Management",
     "Epidemiology and Medical Statistics",
     "Environmental Health Sciences",
@@ -115,6 +111,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Human Nutrition and Dietetics",
   ],
   Science: [
+    "All",
     "Botany",
     "Chemistry",
     "Geology",
@@ -125,6 +122,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Zoology",
   ],
   Technology: [
+    "All",
     "Agricultural and Environmental Engineering",
     "Civil Engineering",
     "Electrical and Electronic Engineering",
@@ -134,6 +132,7 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Petroleum Engineering",
   ],
   "Veterinary Medicine": [
+    "All",
     "Veterinary Anatomy",
     "Veterinary Medicine",
     "Veterinary Microbiology and Parasitology",
@@ -144,78 +143,15 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
   ],
 };
 
-export type IChartDataPoint = Record<string, any>;
-export type IChartDataPointObj = Record<string, IChartDataPoint[]>;
-export type FACULTY =
-  | "All"
-  | "Agriculture"
-  | "Arts"
-  | "Basic Medical Sciences"
-  | "Clinical Sciences"
-  | "Computing"
-  | "Dentistry"
-  | "Economics"
-  | "Education"
-  | "Environmental Design and Management"
-  | "Law"
-  | "Pharmacy"
-  | "Public Health"
-  | "Science"
-  | "Technology"
-  | "Veterinary Medicine";
-
-export type s_type = "Postgraduate" | "Undergraduate" | "International";
-export type STAFF_TYPE = "Academic" | "Non-Academic";
-export type k_type = "All" | "Staff" | "Student" | s_type | STAFF_TYPE;
-
-interface UserProfile {
-  uid: string;
-  email: string;
-  userType: "ADMIN" | "STAFF" | "STUDENT" | "GUEST";
-  displayName: string;
-}
-
-export interface IAppStoreVariables {
-  // --- STATE ---
-  // Store the raw data from your JSON files
-  cdata: IChartDataPointObj | IChartDataPoint[];
-  // Store the user's filter selection
-  appRole: AppRole;
-  userProfile: USER | null; // The authenticated user's details
-  isLoggedIn: boolean;
-  accessLevel: IAccessLevel;
-  focus: { value: string; display: string };
-  keyValue: "" | string;
-  modalTop: "0vh" | "-100vh";
-  faculty: FACULTY;
-  department: string;
-  criteria: k_type;
-  year: string | Date;
-  departments: string[];
-}
-
-export interface IAppStoreActions {
-  // --- ACTIONS ---
-  // Functions to update the state
-  setAuthenticatedUser: (user: USER) => void;
-  setFocus: (type: string | null) => void;
-  setAppRole: (role: AppRole) => void;
-  toggleModalTop: () => void;
-  setAccessLevel: (accessLevel: IAccessLevel) => void;
-  setKeyValue: (keyValue: string) => void;
-  setFaculty: (faculty: FACULTY) => void;
-  setDepartment: (department: string) => void;
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
-  setCriteria: (keyType: k_type) => void;
-  reset: () => void;
-  logout: () => void;
-}
-
-export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
-
 const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
-  cdata: sdatasets, // Load initial data
+  config: {
+    selectedDataTypes: ["GRADE", "DEPARTMENT"],
+    preferredChart: "BAR",
+  },
+  personnel: "Staff",
+  stateoforigin: "Oyo",
+  gender: "Male",
   // Auth Initial State (Hydrated from Local Storage)
   userProfile: LUFLS(),
   isLoggedIn: !!LUFLS(),
@@ -223,11 +159,8 @@ const INITIAL_STATE: IAppStoreVariables = {
   accessLevel: LUFLS()
     ? ACCESS_LEVELS[LUFLS().userType as string as AppRole]
     : ACCESS_LEVELS["VISITOR"],
-  year: "",
-  focus: { value: "", display: "Select a focus..." }, // No year selected by default
-  keyValue: "",
+  year: "2023",
   faculty: "All",
-  criteria: "All",
   modalTop: "-100vh",
   department: DEPARTMENTS["All"][0],
   departments: DEPARTMENTS["All"],
@@ -237,6 +170,20 @@ export const useAppStore = create<IAppStore>((set) => ({
   // --- ACTIONS ---
   // This is how you define a function that updates the state
   reset: () => set({ ...INITIAL_STATE }),
+  setPersonnel(personnel) {
+    set({ personnel });
+  },
+  setConfig(config) {
+    set({
+      config,
+    });
+  },
+  setGender(gender) {
+    set({ gender });
+  },
+  setStateoforigin(stateoforigin) {
+    set({ stateoforigin });
+  },
   // --- AUTHENTICATION ACTIONS ---
   setAuthenticatedUser: (user: USER) =>
     set({
@@ -258,27 +205,8 @@ export const useAppStore = create<IAppStore>((set) => ({
   setAppRole(appRole) {
     set({ appRole });
   },
-  setCriteria(keyType) {
-    set({ criteria: keyType });
-  },
   setAccessLevel(accessLevel) {
     set({ accessLevel });
-  },
-  setFocus: (type: any) => {
-    if (type === "") {
-      return set({
-        focus: { value: "", display: "Select a focus..." },
-      });
-    }
-    return set({
-      focus: {
-        value: type,
-        display: type
-          .replace(/([A-Z])/g, " $1")
-          .trim()
-          .replace(/^./, (str: string) => str.toUpperCase()),
-      },
-    });
   },
   setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
   toggleModalTop() {
@@ -300,9 +228,8 @@ export const useAppStore = create<IAppStore>((set) => ({
   setDepartment(department) {
     set({ department });
   },
-  setKeyValue(keyValue) {
-    const data = sdatasets[keyValue as keyof typeof sdatasets] || [];
-    set({ keyValue, cdata: data });
+  setYear(year) {
+    set({ year });
   },
 
   ...INITIAL_STATE,

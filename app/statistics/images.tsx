@@ -1,5 +1,5 @@
 const modules = import.meta.glob(
-  "../dummyData/InfoStats/INFOSTATISTIC_*.png",
+  "../pocketStats/InfoStats/2023/*.png",
   { eager: true, as: "url" }
 );
 
@@ -10,9 +10,8 @@ export const imagePages: string[] = Object.keys(modules)
   })
   .map((key) => modules[key] as string);
 
-// Check if images were loaded (for debugging)
 if (imagePages.length === 0) {
   console.error(
-    "No images found! Check the glob path: ../dummyData/InfoStats/INFOSTATISTIC_*.png"
+    "No images found! Check the glob path: ../pocketStats/InfoStats/2023/*.png"
   );
 }

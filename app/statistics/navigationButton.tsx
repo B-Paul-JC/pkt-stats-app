@@ -1,9 +1,10 @@
 import type { LucideIcon } from "lucide-react";
+import type { ElementType } from "react";
 
 export interface NavigationButtonProps {
   onClick: () => void;
-  disabled: boolean;
-  icon: LucideIcon; // Type for Lucide component
+  disabled: boolean | string;
+  icon: LucideIcon | ElementType; // Type for Lucide component
   label: string;
   // New prop for vertical alignment
   isVertical: boolean;
@@ -20,18 +21,18 @@ export const NavigationButton: React.FC<NavigationButtonProps> = ({
   return (
     <button
       onClick={onClick}
-      disabled={disabled}
+      disabled={!!disabled}
       // Vertical button styling
       className={`
       flex items-center justify-center p-3 sm:p-4 rounded-full 
-      transition-all duration-300 
+      transition-all duration-100 
       ${isVertical ? "h-16 w-16 sm:h-12 sm:w-12 text-white" : "space-x-2 px-4 py-2 text-sm font-medium"}
       ${
         disabled
-          ? "bg-gray-300/50 text-gray-500 cursor-not-allowed"
+          ? typeof disabled !== "string" ? "bg-gray-300/50 text-gray-500 cursor-not-allowed" : "bg-white text-gray-700 font-bold"
           : "bg-yellow-600 hover:bg-yellow-700 shadow-xl hover:scale-105 cursor-pointer"
       }
-      focus:outline-none focus:ring-4 focus:ring-yellow-500/50
+      active:outline-none active:ring-4 active:ring-yellow-500/50
     `}
       aria-label={label}
     >
