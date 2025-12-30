@@ -143,6 +143,8 @@ const DEPARTMENTS: Record<FACULTY, string[]> = {
   ],
 };
 
+const years = ["", "2024/2025", "2023/2024", "2022/2023"];
+
 const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   config: {
@@ -159,11 +161,18 @@ const INITIAL_STATE: IAppStoreVariables = {
   accessLevel: LUFLS()
     ? ACCESS_LEVELS[LUFLS().userType as string as AppRole]
     : ACCESS_LEVELS["VISITOR"],
-  year: "2023",
+  year: 1,
+  yearDisp: years[1],
   faculty: "All",
   modalTop: "-100vh",
+  cgm: false,
+  active: true,
   department: DEPARTMENTS["All"][0],
+  status: "Active",
   departments: DEPARTMENTS["All"],
+  hallofresidence: "Queen Elizabeth Hall",
+  programmetype: "Full Time",
+  level: "100 Level",
 };
 
 export const useAppStore = create<IAppStore>((set) => ({
@@ -202,6 +211,14 @@ export const useAppStore = create<IAppStore>((set) => ({
       accessLevel: ACCESS_LEVELS["VISITOR"],
     });
   },
+  setLevel(level) {
+    set({
+      level,
+    });
+  },
+  setProgrammetype(programmetype) {
+    set({ programmetype });
+  },
   setAppRole(appRole) {
     set({ appRole });
   },
@@ -228,8 +245,22 @@ export const useAppStore = create<IAppStore>((set) => ({
   setDepartment(department) {
     set({ department });
   },
+  setCgm(cgms) {
+    const cgm = !!cgms;
+    set({ cgm });
+  },
+  setActive(activeV) {
+    const active = !!activeV;
+    set({ active });
+  },
   setYear(year) {
-    set({ year });
+    set({ year, yearDisp: years[year] });
+  },
+  setStatus(status) {
+    set({ status });
+  },
+  setHallofresidence(hallofresidence) {
+    set({ hallofresidence });
   },
 
   ...INITIAL_STATE,

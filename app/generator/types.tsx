@@ -8,6 +8,7 @@ import {
   Building2,
   BookOpen,
   Globe2,
+  Hotel,
 } from "lucide-react";
 
 export const CHART_TYPES = [
@@ -38,30 +39,26 @@ export const CHART_TYPES = [
 ];
 
 export const DATA_TYPES = [
+  // --- ACADEMIC STRUCTURE FILTERS ---
   {
-    id: "PERSONNEL",
-    label: "Personnel",
-    icon: Users,
-    fieldValues: [
-      "Staff",
-      "Student",
-      "Academic Staff",
-      "Non-Academic Staff",
-      "Post-graduate Student",
-      "Under-graduate Student",
+    filter: "year",
+    label: "Academic Session",
+    type: "select",
+    icon: Calendar,
+    defaultValue: null, // Usually defaults to the current active session ID
+    possibleValues: [
+      { label: "2024/2025", value: 1 },
+      { label: "2023/2024", value: 2 },
+      { label: "2022/2023", value: 3 },
     ],
+    note: "Fetch dynamic list from 'academic_sessions' table",
   },
   {
-    id: "GENDER",
-    label: "Gender",
-    icon: Users,
-    fieldValues: ["Male", "Female"],
-  },
-  {
-    id: "STATEOFORIGIN",
+    filter: "STATEOFORIGIN",
     label: "State Of Origin",
+    type: "select",
     icon: Globe2,
-    fieldValues: [
+    possibleValues: [
       "Abia",
       "Adamawa",
       "Akwa Ibom",
@@ -101,10 +98,26 @@ export const DATA_TYPES = [
     ],
   },
   {
-    id: "FACULTY",
-    label: "Faculty / College",
+    filter: "level",
+    label: "Level",
+    type: "select",
+    defaultValue: null,
+    possibleValues: [
+      { label: "100 Level", value: 1 },
+      { label: "200 Level", value: 2 },
+      { label: "300 Level", value: 3 },
+      { label: "400 Level", value: 4 },
+      { label: "500 Level", value: 5 },
+      { label: "Spillover", value: 6 },
+    ],
+  },
+  {
+    filter: "faculty",
+    label: "Faculty",
+    type: "select",
+    defaultValue: null,
     icon: BookOpen,
-    fieldValues: [
+    possibleValues: [
       "All",
       "Agriculture",
       "Arts",
@@ -122,17 +135,95 @@ export const DATA_TYPES = [
       "Technology",
       "Veterinary Medicine",
     ],
+    note: "Acts as a parent filter for department_id",
   },
   {
-    id: "DEPARTMENT",
-    label: "Department / Programme",
-    icon: Building2,
-    fieldValues: [],
+    filter: "department",
+    label: "Department",
+    type: "select",
+    defaultValue: null,
+    possibleValues: [], // Dynamic: Fetch from 'departments' table
+    note: "Should be filtered based on selected faculty_id",
+  },
+
+  // --- USER DEMOGRAPHICS FILTERS ---
+  {
+    filter: "personnel",
+    label: "Personnel",
+    type: "select",
+    defaultValue: "student",
+    possibleValues: ["Student", "Staff"],
   },
   {
-    id: "YEAR",
-    label: "Academic Year",
-    icon: Calendar,
-    fieldValues: ["2025", "2024", "2023", "2022", "2021"],
+    filter: "gender",
+    label: "Gender",
+    icon: Users,
+    type: "select",
+    defaultValue: null,
+    possibleValues: ["Male", "Female"],
+  },
+  {
+    filter: "programmetype",
+    label: "Programme Type",
+    type: "select",
+    defaultValue: "Full Time",
+    possibleValues: [
+      "Full Time",
+      "Part Time",
+      "Distance Learning",
+      "Direct Entry",
+    ],
+  },
+  {
+    filter: "status",
+    label: "Status",
+    type: "select",
+    defaultValue: null,
+    possibleValues: [
+      "Active",
+      "Inactive",
+      "Suspended",
+      "Graduated",
+      "Withdrawn",
+    ],
+  },
+  // --- ACCOMMODATION / HALL FILTERS ---
+  {
+    filter: "hallOfResidence",
+    label: "Hall of Residence",
+    type: "select",
+    icon: Hotel,
+    defaultValue: null,
+    possibleValues: [
+      "Queen Elizabeth Hall",
+      "Mellanby Hall",
+      "King Tedder Hall",
+      "Ransome Kuti Hall",
+      "Sultan Bello Hall",
+      "Nnamdi Azikwe Hall",
+      "Independence Hall",
+      "Queen Idia Hall",
+      "Obafemi Awolowo Hall",
+    ], // Dynamic: Fetch from 'halls' table
+  },
+  {
+    filter: "active",
+    label: "Active Only",
+    type: "boolean",
+    defaultValue: true,
+    possibleValues: [
+      { label: "Active", value: 1 },
+      { label: "Inactive", value: 0 },
+    ],
+  },
+  {
+    filter: "cgm",
+    label: "College of Medicine",
+    type: "boolean",
+    defaultValue: false,
+    possibleValues: [
+      { label: "Yes", value: 1 },
+      { label: "No", value: 0 },
+    ],
   },
 ];

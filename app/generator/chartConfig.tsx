@@ -37,7 +37,7 @@ export const ChartConf = ({
   };
 
   return (
-    <section className="p-6 bg-white rounded-xl shadow-lg h-full border col-span-1 row-span-12 border-gray-200">
+    <section className="p-6 bg-white rounded-xl shadow-lg h-fit md:h-full border col-span-1 row-span-12 border-gray-200">
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
         {CHART_TYPES.map((chart) => (
           <ChartTypeItem
@@ -62,7 +62,7 @@ export const ChartConf = ({
           <br />
           <strong>Department</strong>: {state.department}
           <br />
-          <strong>Academic Year</strong>: {state.year}
+          <strong>Academic Year</strong>: {state.yearDisp}
           <br />
         </p>
         <p className="text-gray-700">
@@ -74,7 +74,7 @@ export const ChartConf = ({
         onClick={() => {
           handleSaveConfig();
         }}
-        className="absolute m-4 bottom-8 right-8 flex items-center px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition duration-200"
+        className="fixed md:absolute m-4 bottom-8 right-8 flex items-center px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition duration-200"
       >
         <Settings2 className="w-5 h-5 mr-2" />
         Generate

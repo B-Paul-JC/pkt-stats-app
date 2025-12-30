@@ -19,6 +19,7 @@ export const ClickableTag: React.FC<ClickableTagProps> = ({
 }) => {
   // Get the action from the store
   id = id.toLowerCase();
+
   const capId = id
     .replace(/([A-Z])/g, " $1")
     .trim()
@@ -27,11 +28,11 @@ export const ClickableTag: React.FC<ClickableTagProps> = ({
   const curr = useAppStore((state) => state[id]);
 
   // Check if this specific tag is currently selected
-  const isSelected = curr === value;
+  const isSelected =
+    typeof curr === "boolean" ? curr === Boolean(value) : curr === value;
 
   const handleClick = () => {
     setState(value);
-    console.log({ [id]: value });
   };
 
   return (

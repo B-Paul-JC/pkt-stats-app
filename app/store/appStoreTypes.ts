@@ -94,17 +94,57 @@ export interface IAppStoreVariables {
   modalTop: "0vh" | "-100vh";
   faculty: FACULTY;
   department: string;
-  year: string;
+  year: number;
   gender: "Male" | "Female";
   departments: string[];
+  cgm: boolean;
+  status: Status;
+  active: boolean;
   stateoforigin: STATEOFORIGIN;
+  yearDisp: string;
   personnel: PERSONNEL;
+  hallofresidence: HallOfResidence;
+  programmetype: P_Type;
+  level: Levels;
 }
+
+export type Levels =
+  | "100 Level"
+  | "200 Level"
+  | "300 Level"
+  | "400 Level"
+  | "500 Level"
+  | "Spillover";
+
+export type Status =
+  | "Active"
+  | "Inactive"
+  | "Suspended"
+  | "Graduated"
+  | "Withdrawn";
+
+export type HallOfResidence =
+  | "Sultan Bello Hall"
+  | "Nnamdi Azikwe Hall"
+  | "Ransome Kuti Hall"
+  | "Mellanby Hall"
+  | "King Tedder Hall"
+  | "Queen Idia Hall"
+  | "Queen Elizabeth Hall"
+  | "Independence Hall"
+  | "Obafemi Awolowo Hall";
+
+export type P_Type =
+  | "Full Time"
+  | "Part Time"
+  | "Distance Learning"
+  | "Direct Entry";
 
 export interface IAppStoreActions {
   // --- ACTIONS ---
   // Functions to update the state
   setConfig: (config: ChartConfig) => void;
+  setProgrammetype: (ptype: P_Type) => void;
   setAuthenticatedUser: (user: USER) => void;
   setStateoforigin: (stateoforigin: STATEOFORIGIN) => void;
   setAppRole: (role: AppRole) => void;
@@ -114,10 +154,15 @@ export interface IAppStoreActions {
   setDepartment: (department: string) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   reset: () => void;
-  setYear: (year: string) => void;
+  setLevel: (level: Levels) => void;
+  setCgm: (cgm: 1 | 0) => void;
+  setStatus: (status: Status) => void;
+  setActive: (active: 1 | 0) => void;
+  setYear: (year: number) => void;
   setGender: (gender: "Male" | "Female") => void;
   logout: () => void;
   setPersonnel: (personnel: PERSONNEL) => void;
+  setHallofresidence: (hall: HallOfResidence) => void;
 }
 
 export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}
