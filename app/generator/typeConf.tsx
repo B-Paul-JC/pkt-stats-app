@@ -3,9 +3,8 @@ import { DataTypeHeadingBlock } from "./dataTypeItem";
 import { DATA_TYPES } from "./types";
 
 export const TypeConf = () => {
-  const faculty = useAppStore((state) => state.faculty);
+  const faculty = useAppStore((state) => state.config.faculty);
 
-  
   return (
     <section className="mb-10 p-6 bg-white rounded-xl col-span-1 row-span-11 md:overflow-y-scroll transition-all duration-100 custom-scrollbar shadow-lg border border-gray-200 h-fit md:h-full">
       <div className="columns-1 sm:columns-2 gap-4">

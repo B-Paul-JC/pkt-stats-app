@@ -2,8 +2,23 @@ import type { AppRole, IAccessLevel } from "~/auth/accessLevel";
 import type { USER } from "~/auth/userSimulation";
 
 export type ChartConfig = {
+  title: string;
   selectedDataTypes: string[];
-  preferredChart: string;
+  chartType: string;
+  faculty: FACULTY;
+  department: string;
+  year: number;
+  gender: "Male" | "Female";
+  departments: string[];
+  cgm: boolean;
+  status: Status;
+  active: boolean;
+  stateoforigin: STATEOFORIGIN;
+  yearDisp: string;
+  personnel: PERSONNEL;
+  hallofresidence: HallOfResidence;
+  programmetype: P_Type;
+  level: Levels;
 };
 
 export type PERSONNEL =
@@ -92,20 +107,6 @@ export interface IAppStoreVariables {
   isLoggedIn: boolean;
   accessLevel: IAccessLevel;
   modalTop: "0vh" | "-100vh";
-  faculty: FACULTY;
-  department: string;
-  year: number;
-  gender: "Male" | "Female";
-  departments: string[];
-  cgm: boolean;
-  status: Status;
-  active: boolean;
-  stateoforigin: STATEOFORIGIN;
-  yearDisp: string;
-  personnel: PERSONNEL;
-  hallofresidence: HallOfResidence;
-  programmetype: P_Type;
-  level: Levels;
 }
 
 export type Levels =
@@ -144,25 +145,12 @@ export interface IAppStoreActions {
   // --- ACTIONS ---
   // Functions to update the state
   setConfig: (config: ChartConfig) => void;
-  setProgrammetype: (ptype: P_Type) => void;
-  setAuthenticatedUser: (user: USER) => void;
-  setStateoforigin: (stateoforigin: STATEOFORIGIN) => void;
   setAppRole: (role: AppRole) => void;
   toggleModalTop: () => void;
   setAccessLevel: (accessLevel: IAccessLevel) => void;
-  setFaculty: (faculty: FACULTY) => void;
-  setDepartment: (department: string) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   reset: () => void;
-  setLevel: (level: Levels) => void;
-  setCgm: (cgm: 1 | 0) => void;
-  setStatus: (status: Status) => void;
-  setActive: (active: 1 | 0) => void;
-  setYear: (year: number) => void;
-  setGender: (gender: "Male" | "Female") => void;
   logout: () => void;
-  setPersonnel: (personnel: PERSONNEL) => void;
-  setHallofresidence: (hall: HallOfResidence) => void;
 }
 
 export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}

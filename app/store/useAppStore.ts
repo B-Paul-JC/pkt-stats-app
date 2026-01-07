@@ -149,49 +149,41 @@ const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   config: {
     selectedDataTypes: ["GRADE", "DEPARTMENT"],
-    preferredChart: "BAR",
+    chartType: "bar",
+    personnel: "Staff",
+    stateoforigin: "Oyo",
+    title: "",
+    year: 1,
+    yearDisp: years[1],
+    faculty: "All",
+    cgm: false,
+    active: true,
+    department: DEPARTMENTS["All"][0],
+    status: "Active",
+    departments: DEPARTMENTS["All"],
+    hallofresidence: "Queen Elizabeth Hall",
+    programmetype: "Full Time",
+    level: "100 Level",
+    gender: "Male",
   },
-  personnel: "Staff",
-  stateoforigin: "Oyo",
-  gender: "Male",
   // Auth Initial State (Hydrated from Local Storage)
+  modalTop: "-100vh",
   userProfile: LUFLS(),
   isLoggedIn: !!LUFLS(),
   appRole: LUFLS() ? LUFLS().userType : "VISITOR",
   accessLevel: LUFLS()
     ? ACCESS_LEVELS[LUFLS().userType as string as AppRole]
     : ACCESS_LEVELS["VISITOR"],
-  year: 1,
-  yearDisp: years[1],
-  faculty: "All",
-  modalTop: "-100vh",
-  cgm: false,
-  active: true,
-  department: DEPARTMENTS["All"][0],
-  status: "Active",
-  departments: DEPARTMENTS["All"],
-  hallofresidence: "Queen Elizabeth Hall",
-  programmetype: "Full Time",
-  level: "100 Level",
 };
 
 export const useAppStore = create<IAppStore>((set) => ({
   // --- ACTIONS ---
   // This is how you define a function that updates the state
   reset: () => set({ ...INITIAL_STATE }),
-  setPersonnel(personnel) {
-    set({ personnel });
-  },
   setConfig(config) {
     set({
       config,
     });
-  },
-  setGender(gender) {
-    set({ gender });
-  },
-  setStateoforigin(stateoforigin) {
-    set({ stateoforigin });
   },
   // --- AUTHENTICATION ACTIONS ---
   setAuthenticatedUser: (user: USER) =>
@@ -211,14 +203,6 @@ export const useAppStore = create<IAppStore>((set) => ({
       accessLevel: ACCESS_LEVELS["VISITOR"],
     });
   },
-  setLevel(level) {
-    set({
-      level,
-    });
-  },
-  setProgrammetype(programmetype) {
-    set({ programmetype });
-  },
   setAppRole(appRole) {
     set({ appRole });
   },
@@ -234,33 +218,6 @@ export const useAppStore = create<IAppStore>((set) => ({
       }
       return { ...turnip, modalTop: newModalTop };
     });
-  },
-  setFaculty(faculty) {
-    set({
-      faculty,
-      departments: DEPARTMENTS[faculty] || [],
-      department: DEPARTMENTS[faculty][0],
-    });
-  },
-  setDepartment(department) {
-    set({ department });
-  },
-  setCgm(cgms) {
-    const cgm = !!cgms;
-    set({ cgm });
-  },
-  setActive(activeV) {
-    const active = !!activeV;
-    set({ active });
-  },
-  setYear(year) {
-    set({ year, yearDisp: years[year] });
-  },
-  setStatus(status) {
-    set({ status });
-  },
-  setHallofresidence(hallofresidence) {
-    set({ hallofresidence });
   },
 
   ...INITIAL_STATE,

@@ -20,19 +20,16 @@ export const ClickableTag: React.FC<ClickableTagProps> = ({
   // Get the action from the store
   id = id.toLowerCase();
 
-  const capId = id
-    .replace(/([A-Z])/g, " $1")
-    .trim()
-    .replace(/^./, (str) => str.toUpperCase());
-  const setState = useAppStore((state) => state[`set${capId}`]);
-  const curr = useAppStore((state) => state[id]);
+  const config = useAppStore((state) => state.config);
+  const setState = useAppStore((state) => state.setConfig);
+  const curr = useAppStore((state) => state.config[id as keyof typeof state.config]);
 
   // Check if this specific tag is currently selected
   const isSelected =
     typeof curr === "boolean" ? curr === Boolean(value) : curr === value;
 
   const handleClick = () => {
-    setState(value);
+    setState({...config, [id]: value});
   };
 
   return (

@@ -29,9 +29,9 @@ export const DataTypeHeadingBlock: React.FC<DataTypeHeadingProps> = ({
   const Icon = type.icon || Database;
 
   // Access dynamic data from store
-  const departments = useAppStore((state) => state.departments);
+  const departments = useAppStore((state) => state.config.departments);
   // // Add other dynamic lists from store here if needed, e.g.:
-  // const faculties = useAppStore((state) => state.facult);
+  // const faculties = useAppStore((state) => state.faculty);
 
   // 2. Determine which fields to render
   // Default to the static values provided in the JSON

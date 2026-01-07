@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { CHART_TYPES } from "./types";
 import { ChartConf } from "./chartConfig";
 import { useAppStore } from "~/store/useAppStore";
@@ -11,8 +11,8 @@ export const ChartConfiguration: React.FC = () => {
 
   // Derived state for display
   const selectedChartObject = useMemo(() => {
-    return CHART_TYPES.find((c) => c.id === config.preferredChart);
-  }, [config.preferredChart]);
+    return CHART_TYPES.find((c) => c.id === config.chartType);
+  }, [config.chartType]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans">
