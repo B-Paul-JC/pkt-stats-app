@@ -145,14 +145,7 @@ export const DATA_TYPES = [
     label: "Level",
     type: "select",
     defaultValue: null,
-    possibleValues: [
-      { label: "100 Level", value: 1 },
-      { label: "200 Level", value: 2 },
-      { label: "300 Level", value: 3 },
-      { label: "400 Level", value: 4 },
-      { label: "500 Level", value: 5 },
-      { label: "Spillover", value: 6 },
-    ],
+    possibleValues: [100, 200, 300, 400, 500],
   },
   {
     filter: "faculty",

@@ -7,7 +7,7 @@ import {
 } from "~/auth/userSimulation";
 import type { FACULTY, IAppStore, IAppStoreVariables } from "./appStoreTypes";
 
-const DEPARTMENTS: Record<FACULTY, string[]> = {
+export const DEPARTMENTS: Record<FACULTY, string[]> = {
   All: ["All"],
   Agriculture: [
     "All",
@@ -163,7 +163,7 @@ const INITIAL_STATE: IAppStoreVariables = {
     departments: DEPARTMENTS["All"],
     hallofresidence: "Queen Elizabeth Hall",
     programmetype: "Full Time",
-    level: "100 Level",
+    level: 100,
     gender: "Male",
   },
   // Auth Initial State (Hydrated from Local Storage)

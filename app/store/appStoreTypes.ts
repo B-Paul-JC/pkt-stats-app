@@ -109,13 +109,7 @@ export interface IAppStoreVariables {
   modalTop: "0vh" | "-100vh";
 }
 
-export type Levels =
-  | "100 Level"
-  | "200 Level"
-  | "300 Level"
-  | "400 Level"
-  | "500 Level"
-  | "Spillover";
+export type Levels = 100 | 200 | 300 | 400 | 500 | 600;
 
 export type Status =
   | "Active"

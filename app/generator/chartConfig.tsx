@@ -45,7 +45,7 @@ export const ChartConf = ({
       // The PHP backend will "fetch" the data from the database.
 
       // Send to PHP Backend
-      const response = await fetch("http://insab.test/generate_charts.php", {
+      const response = await fetch("http://exinsab.test/insab/generate_charts.php", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(config),
@@ -92,6 +92,8 @@ export const ChartConf = ({
           <br />
           <strong>Department</strong>: {config.department}
           <br />
+          <strong>Level</strong>: {config.level}
+          <br />
           <strong>Academic Year</strong>: {config.yearDisp}
           <br />
         </p>
@@ -136,7 +138,7 @@ export const ChartConf = ({
         )}
 
         {results && (
-          <div className="bg-white p-4 rounded-xl shadow-2xl border border-gray-200 mb-2 custom-scrollbar w-full animate-in slide-in-from-bottom-5 h-full overflow-y-auto">
+          <div className="bg-white p-4 rounded-xl shadow-2xl border border-gray-200 mb-2 w-full animate-in slide-in-from-bottom-5 overflow-y-auto flex flex-col custom-scrollbar">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-bold text-gray-800">Assets Ready</h3>
               <button
@@ -147,17 +149,53 @@ export const ChartConf = ({
               </button>
             </div>
 
+            {/* Download Main Report */}
             <a
               href={results.pdf_report}
               target="_blank"
-              className="block w-full text-center py-2 bg-blue-600 text-white rounded-lg mb-4 text-sm hover:bg-blue-700 transition-colors shadow-sm"
+              className="block w-full text-center py-2 bg-blue-600 text-white rounded-lg mb-4 text-sm hover:bg-blue-700 transition-colors shadow-sm font-medium"
             >
-              Download Full PDF Report
+              Download PDF Report
             </a>
 
+            {/* Source Data Preview Table */}
+            {results.source_data && results.source_data.Labels && (
+              <div className="mb-4 bg-gray-50 border border-gray-100 rounded-lg p-2">
+                <div className="text-[10px] font-bold text-gray-500 uppercase mb-1 tracking-wider">
+                  Data from Database
+                </div>
+                <div className="max-h-32 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-200">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="text-gray-400 border-b border-gray-100">
+                        <th className="text-left font-medium pb-1">Label</th>
+                        <th className="text-right font-medium pb-1">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-gray-700">
+                      {results.source_data.Labels.map(
+                        (label: string, i: number) => (
+                          <tr
+                            key={i}
+                            className="border-b border-gray-100/50 last:border-0 hover:bg-white"
+                          >
+                            <td className="py-1">{label}</td>
+                            <td className="py-1 text-right font-mono text-gray-900">
+                              {results.source_data.Count[i]}
+                            </td>
+                          </tr>
+                        )
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Image Previews */}
             <div className="space-y-3">
               <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                Previews
+                Image Previews
               </h4>
               {Object.entries(results.images).map(
                 ([fname, link]: [string, any]) => (
@@ -165,14 +203,11 @@ export const ChartConf = ({
                     key={fname}
                     className="group relative border border-gray-100 rounded-lg overflow-hidden bg-gray-50"
                   >
-                    {/* Image Preview */}
                     <img
                       src={link}
                       alt={fname}
                       className="w-full h-auto object-cover min-h-[100px]"
                     />
-
-                    {/* Overlay for download */}
                     <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
                       <a
                         href={link}
@@ -182,8 +217,6 @@ export const ChartConf = ({
                         Download PNG
                       </a>
                     </div>
-
-                    {/* Label */}
                     <div className="px-3 py-2 text-[10px] text-gray-500 bg-white border-t border-gray-100 flex justify-between items-center">
                       <span
                         className="truncate max-w-[150px] font-medium"

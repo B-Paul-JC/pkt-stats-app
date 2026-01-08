@@ -1,6 +1,6 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
-import { useAppStore } from "~/store/useAppStore";
+import { DEPARTMENTS, useAppStore } from "~/store/useAppStore";
 
 interface ClickableTagProps {
   id: string; // The field ID (e.g., 'DEPARTMENT')
@@ -29,7 +29,14 @@ export const ClickableTag: React.FC<ClickableTagProps> = ({
     typeof curr === "boolean" ? curr === Boolean(value) : curr === value;
 
   const handleClick = () => {
-    setState({...config, [id]: value});
+    const changedData: any = {[id]: value};
+
+    if (id === "faculty" && config["department"]) {
+      // Reset department if faculty changes
+      changedData.department = value;
+      changedData.departments = DEPARTMENTS[value as keyof typeof DEPARTMENTS];
+    }
+    setState({...config, ...changedData});
   };
 
   return (
