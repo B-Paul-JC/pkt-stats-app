@@ -8,13 +8,13 @@ export const TypeConf = () => {
   return (
     <section className="mb-10 p-6 bg-white rounded-xl col-span-1 row-span-11 md:overflow-y-scroll transition-all duration-100 custom-scrollbar shadow-lg border border-gray-200 h-fit md:h-full">
       <div className="columns-1 sm:columns-2 gap-4">
-        {DATA_TYPES.map((type) => {
+        {DATA_TYPES.map((type, index) => {
           if (type.filter === "department") {
-            if (faculty === "All") {
+            if (faculty === "Any") {
               return <></>;
             }
           }
-          return <DataTypeHeadingBlock key={type.filter} type={type} />;
+          return <DataTypeHeadingBlock key={type.filter} type={type} numId={index} />;
         })}
       </div>
     </section>

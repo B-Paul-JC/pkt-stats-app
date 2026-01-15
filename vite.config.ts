@@ -11,5 +11,15 @@ export default defineConfig({
       plugins: [tailwindcss, autoprefixer],
     },
   },
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://192.168.3.83/exinsab",
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""), // Removes '/api' before sending to PHP
+      },
+    },
+  },
   plugins: [reactRouter(), tsconfigPaths(), netlifyPlugin()],
 });

@@ -1,5 +1,6 @@
 import { ChartConfiguration } from "~/generator/main";
 import type { Route } from "./+types/generator";
+import { ProtectedRoute } from "~/ProtectedRoute";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -13,9 +14,9 @@ export function meta({}: Route.MetaArgs) {
 
 const Generator = () => {
   return (
-    <>
+    <ProtectedRoute>
       <ChartConfiguration />
-    </>
+    </ProtectedRoute>
   );
 }
 

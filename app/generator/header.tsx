@@ -1,8 +1,10 @@
 import { Home } from "lucide-react";
 import { Link } from "react-router";
 import logo from "../../public/favicon.ico";
+import { useAppStore } from "~/store/useAppStore";
 
 export const Header = () => {
+  const user = useAppStore(state => state.user)
   return (
     <header className="bg-white shadow-2xl rounded-2xl p-6 col-span-2 flex items-center justify-between">
       <h2 className="font-bold flex items-center">
@@ -14,7 +16,7 @@ export const Header = () => {
         </span>
       </h2>
       <p className="flex gap-5 items-center">
-        Select your desired filters{" "}
+        UID: {user?.uid} ||  Select your desired filters{" "}
         <Link to="/" className="bg-yellow-500 rounded-full shadow-xl text-white p-2">
           <Home />
         </Link>

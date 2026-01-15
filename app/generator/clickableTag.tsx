@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { CheckCircle } from "lucide-react";
-import { DEPARTMENTS, useAppStore } from "~/store/useAppStore";
+import { useAppStore } from "~/store/useAppStore";
+import type { ChartConfig } from "~/store/appStoreTypes";
+import {
+  areArraysIdentical,
+  removeStringFromArray,
+} from "~/store/storeFunctions";
+import { DATA_TYPES } from "./types";
 
 interface ClickableTagProps {
   id: string; // The field ID (e.g., 'DEPARTMENT')
   value: string; // The specific value (e.g., 'Computer Science')
   label: string; // The text to display in the tag
+  numId: number;
 }
 
 /**
@@ -16,28 +23,51 @@ export const ClickableTag: React.FC<ClickableTagProps> = ({
   id,
   value,
   label,
+  numId,
 }) => {
   // Get the action from the store
   id = id.toLowerCase();
 
   const config = useAppStore((state) => state.config);
-  const setState = useAppStore((state) => state.setConfig);
-  const curr = useAppStore((state) => state.config[id as keyof typeof state.config]);
+  const setConfig = useAppStore((state) => state.setConfig);
+  const curr = useAppStore(
+    (state) => state.config[id as keyof typeof state.config]
+  ) as string[];
 
   // Check if this specific tag is currently selected
   const isSelected =
-    typeof curr === "boolean" ? curr === Boolean(value) : curr === value;
+    typeof curr === "boolean" ? curr === Boolean(value) : curr.includes(value);
 
-  const handleClick = () => {
-    const changedData: any = {[id]: value};
+  const handleClick = useCallback(() => {
+    const pnp = id as keyof ChartConfig;
+    const currentValue = config[pnp];
 
-    if (id === "faculty" && config["department"]) {
-      // Reset department if faculty changes
-      changedData.department = value;
-      changedData.departments = DEPARTMENTS[value as keyof typeof DEPARTMENTS];
+    // Update the store based on whether the current value is an array or a single value
+
+    const arrayValue = currentValue as string[];
+    const finalArr = arrayValue.includes(value)
+      ? arrayValue.filter((ct) => ct !== value)
+      : [...arrayValue, value];
+
+    const pValues = DATA_TYPES[numId].possibleValues;
+
+    console.log({finalArr, pValues});
+
+    if (Array.isArray(pValues)) {
+      if (areArraysIdentical(finalArr, removeStringFromArray(pValues, "Any"))) {
+        setConfig({ ...config, [pnp]: ["Any"] });
+        return;
+      }
     }
-    setState({...config, ...changedData});
-  };
+    if (finalArr.length === 0) {
+      setConfig({ ...config, [pnp]: ["Any"] });
+      return;
+    }
+    setConfig({
+      ...config,
+      [pnp]: removeStringFromArray(finalArr, "Any"),
+    });
+  }, [config, setConfig]);
 
   return (
     <span

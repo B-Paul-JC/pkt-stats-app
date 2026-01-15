@@ -3,6 +3,7 @@ import { ChartTypeItem } from "./chartTypeItem";
 import { CHART_TYPES } from "./types";
 import { useAppStore } from "~/store/useAppStore";
 import { useCallback, useState } from "react";
+import type { ChartConfig } from "~/store/appStoreTypes";
 
 type cnfg =
   | {
@@ -15,20 +16,26 @@ type cnfg =
     }
   | undefined;
 
-export const ChartConf = ({
-  selectedChartObject,
-}: {
-  selectedChartObject: cnfg;
-}) => {
+export const ChartConf = () => {
   const config = useAppStore((store) => store.config);
   const setConfig = useAppStore((store) => store.setConfig);
 
-  const handleChartTypeSelect = useCallback((pnp: string, id: string) => {
-    setConfig({
-      ...config,
-      [pnp]: id,
-    });
-  }, []);
+  const handleChartTypeSelect = useCallback(
+    (pnp: keyof ChartConfig, id: string) => {
+      const currentValue = config[pnp];
+      if (!Array.isArray(currentValue)) {
+        return;
+      }
+      const arrayValue = currentValue as string[];
+      setConfig({
+        ...config,
+        [pnp]: arrayValue.includes(id)
+          ? arrayValue.filter((ct) => ct !== id)
+          : [...arrayValue, id],
+      });
+    },
+    [config, setConfig]
+  );
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,11 +52,18 @@ export const ChartConf = ({
       // The PHP backend will "fetch" the data from the database.
 
       // Send to PHP Backend
-      const response = await fetch("http://exinsab.test/insab/generate_charts.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(config),
-      });
+      const data = {
+        uid: useAppStore.getState().user?.uid || "guest",
+        ...config,
+      };
+      const response = await fetch(
+        "http://exinsab.test/insab/generate_charts.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
 
       const json = await response.json();
 
@@ -73,34 +87,40 @@ export const ChartConf = ({
           <ChartTypeItem
             key={chart.id}
             chart={chart}
-            isSelected={config.chartType === chart.id}
+            isSelected={config.chartType.includes(chart.id)}
             onSelect={(id) => {
               handleChartTypeSelect("chartType", id);
             }}
           />
         ))}
       </div>
-      <div className="mt-8 p-4 bg-gray-100 text-gray-700 rounded">
-        <p>
-          <strong>Personnel</strong>: {config.personnel}
-          <br />
-          <strong>Gender</strong>: {config.gender}
-          <br />
-          <strong>State Of Origin</strong>: {config.stateoforigin}
-          <br />
-          <strong>Faculty</strong>: {config.faculty}
-          <br />
-          <strong>Department</strong>: {config.department}
-          <br />
-          <strong>Level</strong>: {config.level}
-          <br />
-          <strong>Academic Year</strong>: {config.yearDisp}
-          <br />
-        </p>
-        <p className="text-gray-700">
-          <strong>Preferred Chart:</strong>{" "}
-          {selectedChartObject?.label || "None"}
-        </p>
+      <div
+        className="mt-6 flex flex-col p-4 rounded-xl shadow-xl transition-all duration-300 cursor-pointer border-4
+        bg-white border-gray-200 hover:border-yellow-500"
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Report Title
+          </label>
+          <input
+            type="text"
+            value={config.title}
+            onChange={(e) => setConfig({ ...config, title: e.target.value })}
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Report Description
+          </label>
+          <textarea
+            value={config.description}
+            onChange={(e) =>
+              setConfig({ ...config, description: e.target.value })
+            }
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          />
+        </div>
       </div>
       {/* --- Backend Integration Section --- */}
       <div className="p-8 rounded-3xl bg-[#2a2a2a] border border-[#333] shadow-lg mt-8">
@@ -193,7 +213,7 @@ export const ChartConf = ({
             )}
 
             {/* Image Previews */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Image Previews
               </h4>
@@ -201,23 +221,19 @@ export const ChartConf = ({
                 ([fname, link]: [string, any]) => (
                   <div
                     key={fname}
-                    className="group relative border border-gray-100 rounded-lg overflow-hidden bg-gray-50"
+                    className="border border-gray-200 rounded-lg overflow-hidden bg-white shadow-sm flex flex-col"
                   >
-                    <img
-                      src={link}
-                      alt={fname}
-                      className="w-full h-auto object-cover min-h-[100px]"
-                    />
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center backdrop-blur-sm">
-                      <a
-                        href={link}
-                        download
-                        className="px-4 py-2 bg-white text-xs font-bold rounded-full hover:bg-gray-100 shadow-lg transform active:scale-95 transition-all"
-                      >
-                        Download PNG
-                      </a>
+                    {/* Image Area */}
+                    <div className="relative bg-gray-50 border-b border-gray-100">
+                      <img
+                        src={link}
+                        alt={fname}
+                        className="w-full h-auto object-contain min-h-[120px]"
+                      />
                     </div>
-                    <div className="px-3 py-2 text-[10px] text-gray-500 bg-white border-t border-gray-100 flex justify-between items-center">
+
+                    {/* Info Row */}
+                    <div className="px-3 py-2 text-[10px] text-gray-500 bg-white border-b border-gray-100 flex justify-between items-center">
                       <span
                         className="truncate max-w-[150px] font-medium"
                         title={fname}
@@ -230,6 +246,15 @@ export const ChartConf = ({
                         {fname.includes("table") ? "Table" : "Chart"}
                       </span>
                     </div>
+
+                    {/* Download Button (Permanent) */}
+                    <a
+                      href={link}
+                      download
+                      className="block w-full text-center py-2 bg-yellow-500 hover:bg-yellow-700 text-xs font-bold text-white transition-colors"
+                    >
+                      Download Image
+                    </a>
                   </div>
                 )
               )}

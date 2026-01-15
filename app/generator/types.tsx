@@ -102,6 +102,7 @@ export const DATA_TYPES = [
     type: "select",
     icon: Globe2,
     possibleValues: [
+      "Any",
       "Abia",
       "Adamawa",
       "Akwa Ibom",
@@ -145,7 +146,7 @@ export const DATA_TYPES = [
     label: "Level",
     type: "select",
     defaultValue: null,
-    possibleValues: [100, 200, 300, 400, 500],
+    possibleValues: ["Any", 100, 200, 300, 400, 500],
   },
   {
     filter: "faculty",
@@ -154,7 +155,7 @@ export const DATA_TYPES = [
     defaultValue: null,
     icon: BookOpen,
     possibleValues: [
-      "All",
+      "Any",
       "Agriculture",
       "Arts",
       "Basic Medical Sciences",
@@ -188,7 +189,7 @@ export const DATA_TYPES = [
     label: "Personnel",
     type: "select",
     defaultValue: "student",
-    possibleValues: ["Student", "Staff"],
+    possibleValues: ["Any", "Student", "Staff"],
   },
   {
     filter: "gender",
@@ -196,7 +197,7 @@ export const DATA_TYPES = [
     icon: Users,
     type: "select",
     defaultValue: null,
-    possibleValues: ["Male", "Female"],
+    possibleValues: ["Any", "Male", "Female"],
   },
   {
     filter: "programmetype",
@@ -204,6 +205,7 @@ export const DATA_TYPES = [
     type: "select",
     defaultValue: "Full Time",
     possibleValues: [
+      "Any",
       "Full Time",
       "Part Time",
       "Distance Learning",
@@ -216,6 +218,7 @@ export const DATA_TYPES = [
     type: "select",
     defaultValue: null,
     possibleValues: [
+      "Any",
       "Active",
       "Inactive",
       "Suspended",
@@ -231,9 +234,10 @@ export const DATA_TYPES = [
     icon: Hotel,
     defaultValue: null,
     possibleValues: [
+      "Any",
       "Queen Elizabeth Hall",
       "Mellanby Hall",
-      "King Tedder Hall",
+      "Lord Tedder Hall",
       "Ransome Kuti Hall",
       "Sultan Bello Hall",
       "Nnamdi Azikwe Hall",

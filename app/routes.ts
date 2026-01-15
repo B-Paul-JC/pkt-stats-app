@@ -4,6 +4,7 @@ export default [
   route("/", "routes/home.tsx"),
   route("/statistics", "routes/statistic.tsx"),
   route("/generate-stats", "routes/generator.tsx"),
+  route("/login", "routes/login.tsx"),
   route("/under-construction", "routes/underConstruction.tsx"),
   route("*", "analytics/pages.tsx"),
 ] satisfies RouteConfig;

@@ -19,11 +19,11 @@ interface FilterDefinition {
 }
 
 interface DataTypeHeadingProps {
-  type: FilterDefinition;
+  type: FilterDefinition;numId:number;
 }
 
 export const DataTypeHeadingBlock: React.FC<DataTypeHeadingProps> = ({
-  type,
+  type, numId
 }) => {
   // Use the icon from the type or a default fallback
   const Icon = type.icon || Database;
@@ -71,6 +71,7 @@ export const DataTypeHeadingBlock: React.FC<DataTypeHeadingProps> = ({
                 key={`${type.filter}-${index}`}
                 {...{
                   value,
+                  numId,
                   id: type.filter, // Uses the unique filter key (e.g. 'level_id')
                   label: String(label),
                   isSelected: false, // Set defaults to false for a filter list

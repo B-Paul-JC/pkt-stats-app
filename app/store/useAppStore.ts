@@ -2,15 +2,14 @@ import { create } from "zustand";
 import { ACCESS_LEVELS, type AppRole } from "~/auth/accessLevel";
 import {
   loadUserFromLocalStorage as LUFLS,
-  USER_STORAGE_KEY,
   type USER,
 } from "~/auth/userSimulation";
-import type { FACULTY, IAppStore, IAppStoreVariables } from "./appStoreTypes";
+import { API_URL, type FACULTY, type IAppStore, type IAppStoreVariables } from "./appStoreTypes";
 
 export const DEPARTMENTS: Record<FACULTY, string[]> = {
-  All: ["All"],
+  Any: ["Any"],
   Agriculture: [
-    "All",
+    "Any",
     "Agricultural Economics",
     "Agricultural Extension and Rural Development",
     "Agronomy",
@@ -22,7 +21,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Wildlife and Ecotourism Management",
   ],
   Arts: [
-    "All",
+    "Any",
     "Arabic and Islamic Studies",
     "Archaeology and Anthropology",
     "Classics",
@@ -31,7 +30,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "European Studies",
   ],
   "Basic Medical Sciences": [
-    "All",
+    "Any",
     "Anatomy",
     "Biochemistry",
     "Biomedical Laboratory Sciences",
@@ -44,7 +43,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Virology",
   ],
   "Clinical Sciences": [
-    "All",
+    "Any",
     "Anaesthesia",
     "Chemical Pathology",
     "Haematology",
@@ -61,23 +60,23 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Surgery",
   ],
   Computing: [
-    "All",
+    "Any",
     "Cyber Security",
     "Software Engineering",
     "Data Science",
     "Information Communication Technology",
   ],
   Dentistry: [
-    "All",
+    "Any",
     "Child Oral Health",
     "Oral and Maxillofacial Surgery",
     "Oral Pathology",
     "Periodontology and Community Dentistry",
     "Restorative Dentistry",
   ],
-  Economics: ["All", "Economics"],
+  Economics: ["Any", "Economics"],
   Education: [
-    "All",
+    "Any",
     "Adult Education",
     "Counselling and Human Development Studies",
     "Educational Management",
@@ -88,14 +87,14 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Special Education",
   ],
   "Environmental Design and Management": [
-    "All",
+    "Any",
     "Architecture",
     "Estate Management",
     "Urban and Regional Planning",
   ],
-  Law: ["All", "Public Law", "Private and Property Law"],
+  Law: ["Any", "Public Law", "Private and Property Law"],
   Pharmacy: [
-    "All",
+    "Any",
     "Pharmaceutical Chemistry",
     "Pharmaceutics and Industrial Pharmacy",
     "Pharmacognosy",
@@ -103,7 +102,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Clinical Pharmacy and Pharmacy Administration",
   ],
   "Public Health": [
-    "All",
+    "Any",
     "Health Policy and Management",
     "Epidemiology and Medical Statistics",
     "Environmental Health Sciences",
@@ -111,7 +110,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Human Nutrition and Dietetics",
   ],
   Science: [
-    "All",
+    "Any",
     "Botany",
     "Chemistry",
     "Geology",
@@ -122,7 +121,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Zoology",
   ],
   Technology: [
-    "All",
+    "Any",
     "Agricultural and Environmental Engineering",
     "Civil Engineering",
     "Electrical and Electronic Engineering",
@@ -132,7 +131,7 @@ export const DEPARTMENTS: Record<FACULTY, string[]> = {
     "Petroleum Engineering",
   ],
   "Veterinary Medicine": [
-    "All",
+    "Any",
     "Veterinary Anatomy",
     "Veterinary Medicine",
     "Veterinary Microbiology and Parasitology",
@@ -149,22 +148,23 @@ const INITIAL_STATE: IAppStoreVariables = {
   // --- INITIAL STATE ---
   config: {
     selectedDataTypes: ["GRADE", "DEPARTMENT"],
-    chartType: "bar",
-    personnel: "Staff",
-    stateoforigin: "Oyo",
+    chartType: [],
+    personnel: ["Any"],
+    stateoforigin: ["Any"],
     title: "",
-    year: 1,
-    yearDisp: years[1],
-    faculty: "All",
+    description: "",
+    year: [1],
+    yearDisp: [years[1]],
+    faculty: ["Any"],
     cgm: false,
-    active: true,
-    department: DEPARTMENTS["All"][0],
-    status: "Active",
-    departments: DEPARTMENTS["All"],
-    hallofresidence: "Queen Elizabeth Hall",
-    programmetype: "Full Time",
-    level: 100,
-    gender: "Male",
+    active: [true],
+    department: [DEPARTMENTS["Any"][0]],
+    status: ["Any"],
+    departments: DEPARTMENTS["Any"],
+    hallofresidence: ["Any"],
+    programmetype: ["Any"],
+    level: ["Any"],
+    gender: ["Any"],
   },
   // Auth Initial State (Hydrated from Local Storage)
   modalTop: "-100vh",
@@ -174,6 +174,10 @@ const INITIAL_STATE: IAppStoreVariables = {
   accessLevel: LUFLS()
     ? ACCESS_LEVELS[LUFLS().userType as string as AppRole]
     : ACCESS_LEVELS["VISITOR"],
+  // --- AUTH STATE ---
+  isAuthenticated: false,
+  user: null,
+  isLoadingAuth: true,
 };
 
 export const useAppStore = create<IAppStore>((set) => ({
@@ -193,16 +197,6 @@ export const useAppStore = create<IAppStore>((set) => ({
       accessLevel: ACCESS_LEVELS[user.userType],
       appRole: user.userType,
     }),
-  logout: () => {
-    localStorage.removeItem(USER_STORAGE_KEY);
-    set({
-      ...INITIAL_STATE,
-      userProfile: null,
-      isLoggedIn: false,
-      appRole: "VISITOR",
-      accessLevel: ACCESS_LEVELS["VISITOR"],
-    });
-  },
   setAppRole(appRole) {
     set({ appRole });
   },
@@ -218,6 +212,39 @@ export const useAppStore = create<IAppStore>((set) => ({
       }
       return { ...turnip, modalTop: newModalTop };
     });
+  },
+  checkAuth: async () => {
+    try {
+      const response = await fetch(`${API_URL}?action=check`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include", // CRITICAL: Sends the PHP Session Cookie
+      });
+      const data = await response.json();
+
+      if (data.authenticated) {
+        set({ isAuthenticated: true, user: data.user, isLoadingAuth: false });
+      } else {
+        set({ isAuthenticated: false, user: null, isLoadingAuth: false });
+      }
+    } catch (e) {
+      set({ isAuthenticated: false, user: null, isLoadingAuth: false });
+    }
+  },
+
+  login: (user) => set({ isAuthenticated: true, user }),
+
+  logout: async () => {
+    try {
+      await fetch(`${API_URL}?action=logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+      set({ isAuthenticated: false, user: null });
+      window.location.href = "/login"; // Redirect
+    } catch (e) {
+      console.error("Logout failed", e);
+    }
   },
 
   ...INITIAL_STATE,

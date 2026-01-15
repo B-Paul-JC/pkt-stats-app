@@ -3,25 +3,37 @@ import type { USER } from "~/auth/userSimulation";
 
 export type ChartConfig = {
   title: string;
+  description: string;
   selectedDataTypes: string[];
-  chartType: string;
-  faculty: FACULTY;
-  department: string;
-  year: number;
-  gender: "Male" | "Female";
+  chartType: string[];
+  faculty: FACULTY[];
+  department: string[];
+  year: number[];
+  gender: gender[];
   departments: string[];
   cgm: boolean;
-  status: Status;
-  active: boolean;
-  stateoforigin: STATEOFORIGIN;
-  yearDisp: string;
-  personnel: PERSONNEL;
-  hallofresidence: HallOfResidence;
-  programmetype: P_Type;
-  level: Levels;
+  status: Status[];
+  active: boolean[];
+  stateoforigin: STATEOFORIGIN[];
+  yearDisp: string[];
+  personnel: PERSONNEL[];
+  hallofresidence: HallOfResidence[];
+  programmetype: P_Type[];
+  level: Levels[];
 };
 
+type gender = "Any" | "Male" | "Female";
+// Add User Type
+export interface User {
+  id: number;
+  uid: string;
+  role: string;
+}
+
+export const API_URL = "/api/backend/oauth/auth.php";
+
 export type PERSONNEL =
+  | "Any"
   | "Staff"
   | "Student"
   | "Academic Staff"
@@ -29,6 +41,7 @@ export type PERSONNEL =
   | "Post-graduate Student"
   | "Under-graduate Student";
 export type STATEOFORIGIN =
+  | "Any"
   | "Abia"
   | "Adamawa"
   | "Akwa Ibom"
@@ -69,7 +82,7 @@ export type STATEOFORIGIN =
 export type IChartDataPoint = Record<string, any>;
 export type IChartDataPointObj = Record<string, IChartDataPoint[]>;
 export type FACULTY =
-  | "All"
+  | "Any"
   | "Agriculture"
   | "Arts"
   | "Basic Medical Sciences"
@@ -86,9 +99,9 @@ export type FACULTY =
   | "Technology"
   | "Veterinary Medicine";
 
-export type s_type = "Postgraduate" | "Undergraduate" | "International";
-export type STAFF_TYPE = "Academic" | "Non-Academic";
-export type k_type = "All" | "Staff" | "Student" | s_type | STAFF_TYPE;
+export type s_type = "Any" | "Postgraduate" | "Undergraduate" | "International";
+export type STAFF_TYPE = "Any" | "Academic" | "Non-Academic";
+export type k_type = "Any" | "Staff" | "Student" | s_type | STAFF_TYPE;
 
 interface UserProfile {
   uid: string;
@@ -107,11 +120,15 @@ export interface IAppStoreVariables {
   isLoggedIn: boolean;
   accessLevel: IAccessLevel;
   modalTop: "0vh" | "-100vh";
+  isAuthenticated: boolean;
+  user: User | null;
+  isLoadingAuth: boolean;
 }
 
-export type Levels = 100 | 200 | 300 | 400 | 500 | 600;
+export type Levels = "Any" | 100 | 200 | 300 | 400 | 500 | 600;
 
 export type Status =
+  | "Any"
   | "Active"
   | "Inactive"
   | "Suspended"
@@ -119,6 +136,7 @@ export type Status =
   | "Withdrawn";
 
 export type HallOfResidence =
+  | "Any"
   | "Sultan Bello Hall"
   | "Nnamdi Azikwe Hall"
   | "Ransome Kuti Hall"
@@ -130,6 +148,7 @@ export type HallOfResidence =
   | "Obafemi Awolowo Hall";
 
 export type P_Type =
+  | "Any"
   | "Full Time"
   | "Part Time"
   | "Distance Learning"
@@ -144,6 +163,8 @@ export interface IAppStoreActions {
   setAccessLevel: (accessLevel: IAccessLevel) => void;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   reset: () => void;
+  checkAuth: () => Promise<void>;
+  login: (user: User) => void;
   logout: () => void;
 }
 
