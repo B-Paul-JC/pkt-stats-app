@@ -196,7 +196,7 @@ export default function Login() {
 
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-400">
-              © {new Date().getFullYear()} UI Student Portal. All rights
+              © {new Date().getFullYear()} UI Info Statistics Generator. All rights
               reserved.
             </p>
           </div>

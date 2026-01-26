@@ -1,5 +1,6 @@
 import type { AppRole, IAccessLevel } from "~/auth/accessLevel";
 import type { USER } from "~/auth/userSimulation";
+import type { StudentListResponse, WidgetData } from "~/generator/types_interfaces";
 
 export type ChartConfig = {
   title: string;
@@ -123,6 +124,7 @@ export interface IAppStoreVariables {
   isAuthenticated: boolean;
   user: User | null;
   isLoadingAuth: boolean;
+  generatedWidgets: (WidgetData | StudentListResponse)[];
 }
 
 export type Levels = "Any" | 100 | 200 | 300 | 400 | 500 | 600;
@@ -166,6 +168,14 @@ export interface IAppStoreActions {
   checkAuth: () => Promise<void>;
   login: (user: User) => void;
   logout: () => void;
+  deleteWidget: (id: string) => void;
+  setGeneratedWidgets: (
+    widgets:
+      | (WidgetData | StudentListResponse)[]
+      | ((
+          prev: (WidgetData | StudentListResponse)[],
+        ) => (WidgetData | StudentListResponse)[]),
+  ) => void;
 }
 
 export interface IAppStore extends IAppStoreVariables, IAppStoreActions {}

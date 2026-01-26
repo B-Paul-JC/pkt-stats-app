@@ -4,7 +4,12 @@ import {
   loadUserFromLocalStorage as LUFLS,
   type USER,
 } from "~/auth/userSimulation";
-import { API_URL, type FACULTY, type IAppStore, type IAppStoreVariables } from "./appStoreTypes";
+import {
+  API_URL,
+  type FACULTY,
+  type IAppStore,
+  type IAppStoreVariables,
+} from "./appStoreTypes";
 
 export const DEPARTMENTS: Record<FACULTY, string[]> = {
   Any: ["Any"],
@@ -166,6 +171,7 @@ const INITIAL_STATE: IAppStoreVariables = {
     level: ["Any"],
     gender: ["Any"],
   },
+  generatedWidgets: [],
   // Auth Initial State (Hydrated from Local Storage)
   modalTop: "-100vh",
   userProfile: LUFLS(),
@@ -213,6 +219,13 @@ export const useAppStore = create<IAppStore>((set) => ({
       return { ...turnip, modalTop: newModalTop };
     });
   },
+  setGeneratedWidgets: (widgets) =>
+    set((state) => ({
+      generatedWidgets:
+        typeof widgets === "function"
+          ? widgets(state.generatedWidgets)
+          : widgets,
+    })),
   checkAuth: async () => {
     try {
       const response = await fetch(`${API_URL}?action=check`, {
@@ -234,13 +247,20 @@ export const useAppStore = create<IAppStore>((set) => ({
 
   login: (user) => set({ isAuthenticated: true, user }),
 
+  deleteWidget: (id: string) =>
+    set((state) => ({
+      generatedWidgets: state.generatedWidgets.filter(
+        (widget) => widget.id !== id,
+      ),
+    })),
+
   logout: async () => {
     try {
       await fetch(`${API_URL}?action=logout`, {
         method: "POST",
         credentials: "include",
       });
-      set({ isAuthenticated: false, user: null });
+      set({ isAuthenticated: false, user: null, generatedWidgets: [] });
       window.location.href = "/login"; // Redirect
     } catch (e) {
       console.error("Logout failed", e);
