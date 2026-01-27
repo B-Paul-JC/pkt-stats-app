@@ -4,7 +4,7 @@ import { imagePages } from "~/statistics/images";
 import { Header } from "~/statistics/header";
 import { ImageCarousel } from "~/statistics/imageCarousel";
 import { DownloadBtn } from "~/statistics/downloads";
-import { ArrowLeft } from "lucide-react";
+import logo from "../../public/favicon.ico";
 import { Link } from "react-router";
 import { ImageCarouselForMobile } from "~/statistics/carouselForMobile";
 
@@ -19,13 +19,14 @@ const modulus = (dividend: number, divisor: number): number => {
 };
 
 const PDFViewer: React.FC = () => {
-  // Constants now derived from the image array
-  const documentFileName: string =
-    "University of Ibadan Statistics Report 2023";
-  const totalPages: number = imagePages.length;
-
   // State: currentPage is 1-indexed for display
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [year, setYear] = useState<number>(2023);
+
+  // Constants now derived from the image array
+  const iPages = imagePages(year);
+  const documentFileName: string = `University of Ibadan Statistics Report ${year}`;
+  const totalPages: number = iPages.length;
 
   // Navigation handlers
   const goToPrev = () => {
@@ -36,27 +37,53 @@ const PDFViewer: React.FC = () => {
     setCurrentPage((prev) => modulus(prev + 1, totalPages));
   };
 
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
+
   // Get the current image source (array is 0-indexed, state is 1-indexed)
-  const currentImageSrc = imagePages[currentPage];
+  const currentImageSrc = iPages[currentPage];
 
   return (
     <>
-      <div className="flex-col h-screen w-full bg-white font-sans p-4 sm:p-8 hidden sm:flex landscape:hidden sm:landscape:flex">
-        <Link
-          to={"/"}
-          download="University_Statistics_Report.pdf"
-          className="fixed top-8 left-8 z-50 px-6 py-3 
-        bg-yellow-600 text-white rounded-full font-bold 
-        shadow-2xl hover:bg-yellow-700 transition-all duration-100 
-        hover:scale-105 transform active:outline-none active:ring-4 active:ring-yellow-500/50"
-        >
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <DownloadBtn text="Download" color="yellow" coords="bottom-8 right-8" />
-        <Header {...{ documentFileName, currentPage, totalPages }} />
+      <div className="flex-col h-screen w-full bg-white font-sans hidden sm:flex landscape:hidden sm:landscape:flex">
+        <div className="shadow-blue-400 shadow flex justify-between items-center p-4">
+          <Link
+            to={"/"}
+            download="University_Statistics_Report.pdf"
+            className="p-3 bg-white text-slate-700 gap-2 rounded-full font-bold
+           hover:shadow-blue-500 transition-all duration-100 transform active:outline-none active:ring-4 flex active:ring-blue-500/50"
+          >
+            <img src={logo} alt="" className="w-5 h-6.5" /> Home
+          </Link>
+          <div>
+            <select
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+              className="p-2 border border-gray-300 rounded-md cursor-pointer"
+            >
+              <option value={2023} selected>
+                2023
+              </option>
+            </select>
+          </div>
+          <Header {...{ documentFileName, currentPage, totalPages }} />
+          <DownloadBtn
+            text="Download"
+            color="yellow"
+            coords="bottom-8 right-8"
+          />
+        </div>
 
         <ImageCarousel
-          {...{ currentImageSrc, currentPage, goToPrev, goToNext }}
+          {...{
+            currentImageSrc,
+            currentPage,
+            goToPrev,
+            goToNext,
+            goToPage,
+            year,
+          }}
         />
       </div>
       <ImageCarouselForMobile

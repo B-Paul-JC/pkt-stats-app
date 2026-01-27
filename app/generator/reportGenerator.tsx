@@ -11,6 +11,9 @@ import {
   Circle,
   Download,
   Building,
+  Building2,
+  User2,
+  Hotel,
 } from "lucide-react";
 import type {
   Role,
@@ -21,6 +24,13 @@ import type {
 } from "./types_interfaces";
 import logo from "../../public/favicon.ico";
 import { useAppStore } from "~/store/useAppStore";
+import {
+  getDepartmentId,
+  getDepartmentsByFaculty,
+  Faculties,
+  getFacultyId,
+} from "./facultiesAndDepartmentsMapper";
+import { getHallId, HALLS } from "./hallMapper";
 
 const API_URL = "/api/api.php";
 // Local Card Component
@@ -40,7 +50,6 @@ const REPORT_DOMAINS: ReportConfig[] = [
   {
     id: "students",
     label: "Student Demographics",
-    allowed: ["admin", "lecturer", "student"],
     breakdowns: [
       { id: "gender", label: "By Gender" },
       { id: "geopolitical_zone", label: "By Geopolitical Zone (Grouped)" },
@@ -53,18 +62,12 @@ const REPORT_DOMAINS: ReportConfig[] = [
   {
     id: "academics",
     label: "Admission & Enrollment",
-    allowed: ["admin", "lecturer"],
-    breakdowns: [
-      { id: "mode_of_admission", label: "Mode of Admission" },
-    ],
+    breakdowns: [{ id: "mode_of_admission", label: "Mode of Admission" }],
   },
   {
     id: "staff",
     label: "Regional Analysis",
-    allowed: ["admin"],
-    breakdowns: [
-      { id: "lga", label: "By LGA (Local Govt Area)" },
-    ],
+    breakdowns: [{ id: "lga", label: "By LGA (Local Govt Area)" }],
   },
 ];
 
@@ -87,7 +90,9 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
 
   const [genderFilter, setGenderFilter] = useState<string>("");
   const [deptFilter, setDeptFilter] = useState<string>("");
+  const [facultyFilter, setFacultyFilter] = useState<string>("");
   const [levelFilter, setLevelFilter] = useState<string>("");
+  const [hall, setHall] = useState<string>("");
 
   const [chartType, setChartType] = useState<WidgetType>("bar");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -95,16 +100,20 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
   const [error, setError] = useState<string | null>(null);
 
   const useStore = useAppStore();
+  const { department_id, faculty_id } = useStore.user || {};
 
-  const availableDomains = useMemo(
-    () => REPORT_DOMAINS.filter((d) => d.allowed.includes(role)),
-    [role],
-  );
+  const faculty = faculty_id ? Faculties[Number(faculty_id)] : facultyFilter;
+
+  const availableDomains = useMemo(() => REPORT_DOMAINS, [role]);
+  const departments = getDepartmentsByFaculty(faculty as any);
 
   const activeConfig = useMemo(
     () => REPORT_DOMAINS.find((d) => d.id === domain),
     [domain],
   );
+
+  const hasDept = department_id !== 0 && department_id !== undefined;
+  const hasFaculty = faculty_id !== 0 && faculty_id !== undefined;
 
   const getPayload = () => ({
     domain,
@@ -113,7 +122,9 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
     title: `${activeConfig?.label}: ${activeConfig?.breakdowns.find((b) => b.id === breakdown)?.label}`,
     filter_gender: genderFilter,
     filter_level: levelFilter,
-    filter_department: deptFilter,
+    filter_department: hasDept ? department_id : getDepartmentId(deptFilter),
+    filter_faculty: hasFaculty ? faculty_id : getFacultyId(facultyFilter),
+    filter_hall: getHallId(hall),
   });
 
   const handleGenerate = async () => {
@@ -174,6 +185,9 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
       setIsDownloading(false);
     }
   };
+
+  const numFields = 6 + Number(!hasDept) + Number(!hasDept && !hasFaculty);
+  const gridsLength = `p-5 grid grid-cols-1 md:grid-cols-4 ${"lg:grid-cols-" + numFields} gap-4 items-end`;
 
   return (
     <>
@@ -289,10 +303,10 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
         `}
       </style>
 
-      <Card className="report-generator-card p-0 border-yellow-200 bg-linear-to-br from-yellow-50 to-white">
-        <div className="p-4 border-b border-yellow-100 flex items-center justify-between">
+      <Card className="report-generator-card p-0 border-blue-200 bg-linear-to-br from-blue-50 to-white">
+        <div className="p-4 border-b border-blue-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-yellow-100 rounded-lg text-yellow-700">
+            <div className="p-2 bg-blue-100 rounded-lg text-blue-700">
               <Layers size={18} />
             </div>
             <div>
@@ -308,7 +322,7 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
           <button
             onClick={handleDownloadPDF}
             disabled={!useStore.generatedWidgets || isDownloading}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-yellow-800 bg-yellow-100 rounded-md hover:bg-yellow-200 transition-colors disabled:opacity-50 ${!useStore.generatedWidgets || "cursor-not-allowed"}`}
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-blue-800 bg-blue-100 rounded-md hover:bg-blue-200 transition-colors disabled:opacity-50 ${!useStore.generatedWidgets || "cursor-not-allowed"}`}
           >
             {isDownloading ? (
               <RefreshCw size={14} className="animate-spin" />
@@ -319,13 +333,13 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
           </button>
         </div>
 
-        <div className="p-5 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-4 items-end">
+        <div className={gridsLength}>
           <div className="space-y-1.5 md:col-span-1">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">
-              Category
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1">
+              <Filter size={10} /> Category
             </label>
             <select
-              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all shadow-sm"
+              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
               value={domain}
               onChange={(e) => {
                 setDomain(e.target.value as Domain);
@@ -345,12 +359,12 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
 
           <div className="space-y-1.5 md:col-span-1">
             <label
-              className={`text-xs font-bold uppercase tracking-wide ${!domain ? "text-slate-300" : "text-slate-500"}`}
+              className={`text-xs font-bold uppercase tracking-wide flex items-center gap-1 ${!domain ? "text-slate-300" : "text-slate-500"}`}
             >
-              Field
+              <Filter size={10} /> Field
             </label>
             <select
-              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all shadow-sm disabled:bg-slate-50"
+              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm disabled:opacity-50"
               value={breakdown}
               onChange={(e) => setBreakdown(e.target.value)}
               disabled={!domain}
@@ -366,10 +380,10 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
 
           <div className="space-y-1.5 md:col-span-1">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1">
-              <Filter size={10} /> Gender
+              <User2 size={10} /> Gender
             </label>
             <select
-              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all shadow-sm"
+              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
               value={genderFilter}
               onChange={(e) => setGenderFilter(e.target.value)}
             >
@@ -380,11 +394,33 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
           </div>
 
           <div className="space-y-1.5 md:col-span-1">
+            <label className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center">
+              <Hotel size={12} className="inline mr-1" /> Hall
+            </label>
+            <select
+              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
+              value={hall}
+              onChange={(e) => {
+                setHall(e.target.value);
+              }}
+            >
+              <option value="">All Halls</option>
+              {HALLS.filter(
+                (h) => !genderFilter || h.gender === genderFilter,
+              ).map((h) => (
+                <option key={h.id} value={h.name}>
+                  {h.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="space-y-1.5 md:col-span-1">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1">
               <Filter size={10} /> Level
             </label>
             <select
-              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all shadow-sm"
+              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
             >
@@ -397,18 +433,53 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
             </select>
           </div>
 
-          <div className="md:col-span-1 lg:col-span-1 space-y-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1">
-              <Filter size={10} /> <Building size={10} /> Dept ID
-            </label>
-            <input
-              type="number"
-              className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-yellow-500 outline-none transition-all shadow-sm"
-              placeholder="ID"
-              value={deptFilter}
-              onChange={(e) => setDeptFilter(e.target.value)}
-            />
-          </div>
+          {!hasDept && !hasFaculty && (
+            <div className="space-y-1.5 md:col-span-1">
+              <label className="text-xs font-bold text-slate-500 uppercase tracking-wide flex items-center">
+                <Building2 size={12} className="inline mr-1" /> Faculty
+              </label>
+              <select
+                className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none transition-all shadow-sm"
+                value={facultyFilter}
+                onChange={(e) => {
+                  setFacultyFilter(e.target.value);
+                  setDeptFilter("");
+                }}
+              >
+                <option value="">All Faculties</option>
+                {Faculties.map((d, id) => (
+                  <option key={id} value={d}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {!hasDept && (
+            <div className="space-y-1.5 md:col-span-1">
+              <label
+                className={`text-xs font-bold uppercase tracking-wide flex items-center ${departments.length === 0 ? "text-slate-300" : "text-slate-500"}`}
+              >
+                <Building size={12} className="inline mr-1" /> Department
+              </label>
+              <select
+                className="w-full pl-2 pr-6 py-2.5 rounded-lg border hover:border-slate-500 cursor-pointer border-slate-300 text-sm bg-white focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed focus:ring-blue-500 outline-none transition-all shadow-sm"
+                value={deptFilter}
+                disabled={departments.length === 0}
+                onChange={(e) => {
+                  setDeptFilter(e.target.value);
+                }}
+              >
+                <option value="">All Departments</option>
+                {departments.map((d) => (
+                  <option key={d.id} value={d.name}>
+                    {d.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-1.5 md:col-span-1">
             <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">
@@ -419,7 +490,7 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
                 <button
                   key={type.type}
                   onClick={() => setChartType(type.type)}
-                  className={`flex-1 p-1.5 flex justify-center items-center rounded-md transition-all ${chartType === type.type ? "bg-white shadow-sm text-yellow-600" : "text-slate-400 hover:text-slate-600"}`}
+                  className={`flex-1 p-1.5 flex justify-center items-center rounded-md transition-all ${chartType === type.type ? "bg-white shadow-sm text-blue-600" : "text-slate-400 hover:text-slate-600"}`}
                   title={type.label}
                 >
                   <type.icon size={16} />
@@ -432,7 +503,7 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
             <button
               onClick={handleGenerate}
               disabled={!domain || !breakdown || isGenerating}
-              className="w-full h-10.5 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all flex items-center justify-center gap-2"
+              className="w-full h-10.5 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none transition-all flex items-center justify-center gap-2"
             >
               {isGenerating ? (
                 <RefreshCw size={18} className="animate-spin" />

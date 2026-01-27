@@ -1,4 +1,9 @@
-export type Role = "admin" | "lecturer" | "student";
+export type Role =
+  | "HOD"
+  | "Dean Of Students"
+  | "Vice Chancellor"
+  | "Faculty Officer"
+  | "Dean Of Faculty";
 export type WidgetType =
   | "bar"
   | "line"
@@ -76,7 +81,7 @@ export interface StudentListResponse {
   print_meta: PrintMeta;
   error?: string;
   is_chart?: boolean;
-  list_title?: string;
+  title?: string;
 }
 
 // --- Report Configuration ---
@@ -95,7 +100,6 @@ export interface BreakdownOption {
 export interface ReportConfig {
   id: Domain;
   label: string;
-  allowed: Role[];
   breakdowns: BreakdownOption[];
   filters?: {
     label: string;

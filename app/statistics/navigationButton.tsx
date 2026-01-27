@@ -29,10 +29,12 @@ export const NavigationButton: React.FC<NavigationButtonProps> = ({
       ${isVertical ? "h-16 w-16 sm:h-12 sm:w-12 text-white" : "space-x-2 px-4 py-2 text-sm font-medium"}
       ${
         disabled
-          ? typeof disabled !== "string" ? "bg-gray-300/50 text-gray-500 cursor-not-allowed" : "bg-white text-gray-700 font-bold"
-          : "bg-yellow-600 hover:bg-yellow-700 shadow-xl hover:scale-105 cursor-pointer"
+          ? typeof disabled !== "string"
+            ? "bg-gray-300/50 text-gray-500 cursor-not-allowed"
+            : "bg-white text-gray-700 font-bold"
+          : "bg-blue-600 hover:bg-blue-700 shadow-xl hover:scale-105 cursor-pointer"
       }
-      active:outline-none active:ring-4 active:ring-yellow-500/50
+      active:outline-none active:ring-4 active:ring-blue-500/50
     `}
       aria-label={label}
     >

@@ -1,0 +1,31 @@
+type breakdown = { title: string; number: number }[];
+
+export const pages: { [year: number]: breakdown } = {
+  2023: [
+    { title: "Introduction", number: 0 },
+    { title: "University Vision", number: 1 },
+    { title: "Student Statistics", number: 2 },
+    { title: "By Faculty", number: 3 },
+    { title: "New Entrants", number: 4 },
+    { title: "Other Categories", number: 5 },
+    { title: "Staff Statistics", number: 6 },
+    { title: "By Faculty", number: 7 },
+    { title: "Non-Academic By Category", number: 8 },
+    { title: "Staff Statistics By Rank", number: 9 },
+    { title: "By Category", number: 10 },
+    { title: "Total Graduate Output", number: 11 },
+    { title: "International Students", number: 12 },
+    { title: "Graduate By Degree", number: 13 },
+    { title: "Students By Programme", number: 14 },
+    { title: "Students By Gender", number: 15 },
+    { title: "Students By Faculty - Table", number: 16 },
+    { title: "International Students - Table", number: 17 },
+    { title: "New Entrants - Table", number: 18 },
+    { title: "Academic Staff by Gender - Table", number: 19 },
+    { title: "Staff Per Faculty - Table", number: 20 },
+    { title: "Staff By Rank - Table", number: 21 },
+    { title: "Staff By Graduate Output - Table", number: 22 },
+    { title: "Non-Academic By Category - Table", number: 23 },
+    { title: "Hall Of Residence - Table", number: 24 },
+  ],
+};

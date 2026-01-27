@@ -236,6 +236,7 @@ export const useAppStore = create<IAppStore>((set) => ({
       const data = await response.json();
 
       if (data.authenticated) {
+        console.log(data)
         set({ isAuthenticated: true, user: data.user, isLoadingAuth: false });
       } else {
         set({ isAuthenticated: false, user: null, isLoadingAuth: false });

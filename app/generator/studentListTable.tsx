@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import type { StudentListResponse } from "./types_interfaces";
 import { Card } from "./statCard";
-import { Download, File, Trash2 } from "lucide-react";
+import { Download, SkipForwardIcon, Trash2 } from "lucide-react";
 import { useAppStore } from "~/store/useAppStore";
+import { SelfDestructMessage } from "./selfDestructMessageBox";
 
 interface Props {
   data: StudentListResponse | null;
@@ -20,9 +21,11 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
   if (!data || !data.data || data.data.length === 0) {
     if (data && data.data && data.data.length === 0) {
       return (
-        <Card className="p-8 text-center text-slate-400 text-sm italic border border-slate-200">
-          No records found matching criteria.
-        </Card>
+        <SelfDestructMessage
+          message="No student records found for the selected criteria."
+          duration={9}
+          onComplete={() => store.deleteWidget(data.id)}
+        />
       );
     }
     return null;
@@ -109,7 +112,7 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
       <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
         <div>
           <h3 className="font-bold text-lg text-slate-900">
-            {data.list_title || "Student List"}
+            {data.title || "Student List"}
           </h3>
           <p className="text-xs text-slate-500">{data.count} records found</p>
         </div>
@@ -118,6 +121,7 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
             onClick={() => {
               handleDownload("csv");
             }}
+            disabled={isDownloading}
             className="p-1.5 text-blue-600 hover:bg-blue-50 rounded transition-colors flex items-center gap-1"
           >
             <Download size={16} /> .csv
@@ -127,7 +131,7 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
               handleDownload("xlsx");
             }}
             disabled={true}
-            style={{cursor: "not-allowed !important"}}
+            style={{ cursor: "not-allowed !important" }}
             className="opacity-50 p-1.5 text-slate-600 hover:bg-green-50 rounded transition-colors flex items-center gap-1 cursor-not-allowed"
           >
             <Download size={16} /> .xlsx
@@ -136,6 +140,7 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
             onClick={() => {
               handleDownload("pdf");
             }}
+            disabled={isDownloading}
             className="p-1.5 text-red-600 hover:bg-red-50 rounded transition-colors flex items-center gap-1"
           >
             <Download size={16} /> .pdf
@@ -153,6 +158,13 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
           </span>
           {/* Pagination Buttons */}
           <button
+            onClick={() => setMinRow(0)}
+            disabled={minRow === 0}
+            className="px-3 rotate-180 py-1 text-xs bg-slate-200 text-slate-700 rounded disabled:opacity-50"
+          >
+            <SkipForwardIcon size={12} />
+          </button>
+          <button
             onClick={() => setMinRow(Math.max(0, minRow - rowsPerPage))}
             disabled={minRow === 0}
             className="px-3 py-1 text-xs bg-slate-200 text-slate-700 rounded disabled:opacity-50"
@@ -165,6 +177,13 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
             className="px-3 py-1 text-xs bg-slate-200 text-slate-700 rounded disabled:opacity-50"
           >
             Next
+          </button>
+          <button
+            onClick={() => setMinRow(data.data.length - rowsPerPage)}
+            disabled={minRow >= data.data.length - rowsPerPage}
+            className="px-3 py-1 text-xs bg-slate-200 text-slate-700 rounded disabled:opacity-50"
+          >
+            <SkipForwardIcon size={12} />
           </button>
         </div>
       </div>

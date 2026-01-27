@@ -2,13 +2,13 @@ import { type FC } from "react";
 // 1. Swapping Font Awesome imports for Lucide React imports
 import {
   Users,
-  LineChart,
-  DollarSign,
   ThumbsUp,
   Rocket,
   AreaChart,
   Bell,
   Wallet,
+  Building2,
+  Building,
 } from "lucide-react";
 
 export interface STCard {
@@ -24,8 +24,8 @@ export interface STCard {
 const iconMap: Record<string, any> = {
   // Mapping string names to Lucide components
   users: Users,
-  "chart-line": LineChart,
-  "dollar-sign": DollarSign,
+  faculty: Building2,
+  dept: Building,
   "thumbs-up": ThumbsUp,
   rocket: Rocket,
   "chart-area": AreaChart,
@@ -48,7 +48,7 @@ export const StatCard: FC<STCard> = ({
   return (
     <div
       className={`relative flex items-center justify-between p-6 rounded-xl
-                  bg-linear-to-bl pt-0 bg-yellow-400 backdrop-blur-2xl
+                  bg-linear-to-bl pt-0 bg-blue-400 backdrop-blur-2xl max-h-48 max-w-48
                   shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 glow-pulse-indigo cursor-pointer overflow-clip sclanim`}
       style={{ animationDelay }}
     >
@@ -56,7 +56,7 @@ export const StatCard: FC<STCard> = ({
         {/* Icon */}
         {ResolvedIconComponent && (
           // 4. Render the Lucide component and apply size classes (w-12 h-12)
-          <div className={`mb-3 text-yellow-700`}>
+          <div className={`mb-3 text-blue-700`}>
             <ResolvedIconComponent className="w-12 h-12" />
           </div>
         )}
@@ -74,7 +74,7 @@ export const StatCard: FC<STCard> = ({
         </span>
       )}
       <span
-        className={`text-3xl font-extrabold absolute right-2 -rotate-45 bottom-8 `}
+        className={`text-3xl font-extrabold absolute right-3 text-left bottom-5 `}
       >
         {value}
       </span>

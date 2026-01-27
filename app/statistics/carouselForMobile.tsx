@@ -38,7 +38,7 @@ export const ImageCarouselForMobile = ({
             icon={() => (
               <p className="text-black">
                 Page <br />{" "}
-                <span className="text-yellow-400">{currentPage + 1}</span>
+                <span className="text-blue-400">{currentPage + 1}</span>
                 <br /> <span>/{totalPages}</span>
               </p>
             )}

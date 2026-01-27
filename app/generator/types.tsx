@@ -5,7 +5,6 @@ import {
   ScatterChart,
   Calendar,
   Users,
-  Building2,
   BookOpen,
   Globe2,
   Hotel,
@@ -17,6 +16,25 @@ import {
   AreaChart,
   BarChart4,
 } from "lucide-react";
+
+export const FACULTIES = [
+  "Any",
+  "Agriculture",
+  "Arts",
+  "Basic Medical Sciences",
+  "Clinical Sciences",
+  "Computing",
+  "Dentistry",
+  "Economics",
+  "Education",
+  "Environmental Design and Management",
+  "Law",
+  "Pharmacy",
+  "Public Health",
+  "Science",
+  "Technology",
+  "Veterinary Medicine",
+];
 
 export const CHART_TYPES = [
   {

@@ -3,7 +3,7 @@ import { StatCard } from "~/designs/statsCard";
 
 interface mapCon {
   icon: string | FC<any>;
-  value: number;
+  value: number | string;
   label: string;
 }
 
@@ -11,19 +11,19 @@ const iconMap: mapCon[] = [
   // Mapping string names to Lucide components
   {
     icon: "users",
-    value: Math.round((Math.random() + 1) * 245),
+    value: "39k+",
     label: "Students",
   },
   {
-    icon: "chart-line",
-    value: Math.round((Math.random() + 1) * 245),
-    label: "Growth",
+    icon: "faculty",
+    value: "19",
+    label: "Faculties",
   },
   {
-    icon: "dollar-sign",
-    value: Math.round((Math.random() + 1) * 245),
-    label: "Cash Flow",
-  }, // Using DollarSign
+    icon: "dept",
+    value: 140,
+    label: "Departments",
+  },
   {
     icon: "thumbs-up",
     value: Math.round((Math.random() + 1) * 245),
@@ -58,9 +58,6 @@ export const CustomGrid = () => {
         className="col-span-2 row-span-full lg:row-span-4 pop-in-animation lg:row-start-2 lg:h-full grid grid-cols-2 lg:grid-cols-3 lg:grid-rows-3 gap-4 p-4"
         style={{ animationDelay: "100ms" }}
       >
-        <h3 className="col-span-full text-center lg:absolute lg:-top-10 lg:left-1/3 lg:w-1/3 text-2xl pb-6 italic lg:text-white">
-          Quick Statistics
-        </h3>
         {iconMap.map(({ icon, value, label }, index) => {
           return (
             <StatCard

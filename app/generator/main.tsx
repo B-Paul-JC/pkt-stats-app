@@ -8,6 +8,7 @@ import { useAppStore } from "~/store/useAppStore";
 import { StudentListTable } from "./studentListTable";
 import { StudentListGenerator } from "./studentListGenerator";
 import { useState } from "react";
+import { getDepartment, getFaculty } from "./facultiesAndDepartmentsMapper";
 
 type View = "Analysis" | "Data Finder";
 
@@ -16,8 +17,7 @@ export function SchoolStatsApp() {
   const setGeneratedWidgets = useAppStore((state) => state.setGeneratedWidgets);
   const store = useAppStore();
 
-  const role = store.user?.role as Role;
-  const uid = store.user?.uid;
+  const { role, uid, department_id, faculty_id } = store.user || {};
 
   const handleReportGenerated = (newWidget: WidgetData) => {
     setGeneratedWidgets((prev) => [newWidget, ...prev]);
@@ -25,10 +25,6 @@ export function SchoolStatsApp() {
 
   const [currentView, setCurrentView] = useState<View>("Analysis");
   const views: View[] = ["Analysis", "Data Finder"];
-
-  if (role != "admin") {
-    views.pop();
-  }
 
   return (
     <div className="flex min-h-screen bg-slate-100 font-sans text-slate-800">
@@ -52,10 +48,17 @@ export function SchoolStatsApp() {
             <div className="flex items-center gap-3">
               <UserCircle size={32} className="text-slate-400" />
               <div>
-                <p className="text-sm font-medium">User ID: {uid}</p>
-                <p className="text-xs font-bold uppercase tracking-wider text-yellow-400">
+                <p className="text-xs font-bold uppercase tracking-wider text-blue-400">
                   {role}
                 </p>
+                {!!department_id && (
+                  <p className="text-sm font-medium">
+                    Department: {getDepartment(department_id)?.name}
+                  </p>
+                )}
+                {!!faculty_id && (
+                  <p className="text-sm font-medium">Faculty: {getFaculty(faculty_id)}</p>
+                )}
               </div>
             </div>
             <div className="flex bg-white rounded-md shadow-sm border border-slate-200 p-0.5">
@@ -63,7 +66,7 @@ export function SchoolStatsApp() {
                 <button
                   key={r}
                   onClick={() => setCurrentView(r)}
-                  className={`px-3 py-1 text-xs font-bold rounded-sm capitalize transition-all ${currentView === r ? "bg-yellow-500 text-white shadow-sm" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"}`}
+                  className={`px-3 py-1 text-xs font-bold rounded-sm capitalize transition-all ${currentView === r ? "bg-blue-500 text-white shadow-sm" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"}`}
                 >
                   {r}
                 </button>
@@ -80,7 +83,10 @@ export function SchoolStatsApp() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
           {currentView === "Analysis" && (
-            <ReportGenerator role={role} onGenerate={handleReportGenerated} />
+            <ReportGenerator
+              role={role as Role}
+              onGenerate={handleReportGenerated}
+            />
           )}
 
           {/* VIEW 2: DIRECTORY */}

@@ -9,7 +9,7 @@ const UnderConstruction: FC = () => {
         {/* Header with Icon */}
         <div className="mb-8 flex justify-center">
           <div className="relative">
-            <Hammer size={80} className="text-yellow-300 animate-bounce" />
+            <Hammer size={80} className="text-blue-300 animate-bounce" />
             <Zap
               size={40}
               className="text-orange-300 absolute -top-2 -right-2 animate-pulse"
@@ -29,7 +29,7 @@ const UnderConstruction: FC = () => {
             <div className="flex flex-col items-center ">
               <AlertCircle
                 size={32}
-                className="text-yellow-300 mb-2 rounded-full w-20 h-14 justify-center mx-auto"
+                className="text-blue-300 mb-2 rounded-full w-20 h-14 justify-center mx-auto"
               />
               <p className="font-bold italic text-sm text-white">Stay Tuned</p>
             </div>

@@ -29,6 +29,8 @@ export interface User {
   id: number;
   uid: string;
   role: string;
+  department_id: number;
+  faculty_id: number;
 }
 
 export const API_URL = "/api/backend/oauth/auth.php";
@@ -103,13 +105,6 @@ export type FACULTY =
 export type s_type = "Any" | "Postgraduate" | "Undergraduate" | "International";
 export type STAFF_TYPE = "Any" | "Academic" | "Non-Academic";
 export type k_type = "Any" | "Staff" | "Student" | s_type | STAFF_TYPE;
-
-interface UserProfile {
-  uid: string;
-  email: string;
-  userType: "ADMIN" | "STAFF" | "STUDENT" | "GUEST";
-  displayName: string;
-}
 
 export interface IAppStoreVariables {
   // --- STATE ---

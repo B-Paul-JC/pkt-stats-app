@@ -35,6 +35,7 @@ import {
 import type { WidgetData } from "./types_interfaces";
 import { useAppStore } from "~/store/useAppStore";
 import logo from "../../public/favicon.ico";
+import { SelfDestructMessage } from "./selfDestructMessageBox";
 
 // Local Card definition
 const WidgetCard: React.FC<{
@@ -68,7 +69,7 @@ const AccessDeniedWidget: React.FC<{ title: string; message: string }> = ({
 
 export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
   const store = useAppStore();
-    
+
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | "none">("none");
 
   useEffect(() => {
@@ -86,7 +87,18 @@ export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
 
   const { data, config, print_meta } = widget;
   if (!data || !config) return null;
-
+  if (!data || data.length === 0) {
+    if (data && data.length === 0) {
+      return (
+        <SelfDestructMessage
+          message="No students found for the selected criteria."
+          duration={9}
+          onComplete={() => store.deleteWidget(widget.id)}
+        />
+      );
+    }
+    return null;
+  }
   // --- Metrics Calculation ---
   const getItemTotal = (item: any) => {
     let itemTotal = 0;
@@ -223,14 +235,10 @@ export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
     >
       {/* --- PRINT HEADER (Hidden on Screen) --- */}
       {print_meta && (
-        <div className="hidden print:flex flex-col border-b-2 border-yellow-500 pb-4 mb-6 w-full">
+        <div className="hidden print:flex flex-col border-b-2 border-blue-500 pb-4 mb-6 w-full">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <img
-                src={logo}
-                alt="Logo"
-                className="w-16 h-16 object-contain"
-              />
+              <img src={logo} alt="Logo" className="w-16 h-16 object-contain" />
               <div>
                 <h1 className="text-2xl font-bold text-slate-900 uppercase tracking-tight">
                   {print_meta.school_name}
@@ -280,13 +288,13 @@ export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
         <div className="flex flex-col items-end gap-2 print:hidden">
           <div className="flex items-center gap-2">
             {widget.tag && (
-              <span className="px-2 py-1 bg-yellow-50 text-yellow-800 border border-yellow-200 text-xs font-bold rounded">
+              <span className="px-2 py-1 bg-blue-50 text-blue-800 border border-blue-200 text-xs font-bold rounded">
                 {widget.tag}
               </span>
             )}
             <button
               onClick={toggleSort}
-              className="p-1.5 text-slate-400 hover:text-yellow-600 hover:bg-yellow-50 rounded transition-colors"
+              className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
             >
               <SortIcon size={16} />
             </button>
@@ -299,7 +307,7 @@ export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
               <Trash2 size={16} />
             </button>
           </div>
-          <span className="text-sm font-semibold text-yellow-900 bg-yellow-50 px-2 py-0.5 rounded border border-yellow-200 whitespace-nowrap">
+          <span className="text-sm font-semibold text-blue-900 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 whitespace-nowrap">
             Total: {total.toLocaleString()}
           </span>
         </div>
@@ -415,7 +423,9 @@ export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
                 );
               case "pie":
                 return (
-                  <PieChart margin={{ top: 20, bottom: 20, right: 20, left: 20 }}>
+                  <PieChart
+                    margin={{ top: 20, bottom: 20, right: 20, left: 20 }}
+                  >
                     <Tooltip />
                     <Legend
                       layout="vertical"
@@ -423,7 +433,7 @@ export const DynamicWidget: React.FC<{ widget: WidgetData }> = ({ widget }) => {
                       align="right"
                       width={520}
                       content={({ payload }) => (
-                        <div className="max-h-112.5 overflow-y-auto pr-2 grid grid-cols-3 gap-x-6 gap-y-3">
+                        <div className="max-h-112.5 overflow-y-auto pr-2 grid grid-cols-2 gap-x-6 gap-y-3">
                           {payload?.map((entry: any, index: number) => {
                             const val = entry.payload.value;
                             const percent =
