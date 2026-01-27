@@ -51,11 +51,11 @@ button {
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #fceca5; /* Indigo-300 */
+  background: #a5a6fc; /* Indigo-300 */
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #f8f681; /* Indigo-400 */
+  background: #8183f8; /* Indigo-400 */
 }
 
 /* Firefox support (limited styling) */
@@ -142,13 +142,13 @@ button {
 /* Example usage class: */
 .glow-pulse-indigo {
   /* This sets the glow color to indigo for the keyframes to use */
-  --glow-color: rgba(245, 158, 11, 0.4);
+  --glow-color: rgba(15, 11, 245, 0.4);
   /* animation: glowPulse 300ms ease-in-out infinite; */
   box-shadow: -4px -4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
 }
 .glow-pulse-blue {
   /* This sets the glow color to blue */
-  --glow-color: rgba(245, 158, 11, 0.4);
+  --glow-color: rgba(15, 11, 245, 0.4);
   animation: glowPulse 2.5s ease-in-out infinite alternate;
 }
 
