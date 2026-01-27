@@ -37,7 +37,7 @@ export const StatCard: FC<STCard> = ({
   icon = "users",
   value = 680,
   label = "Total Users",
-  color = "yellow",
+  color = "blue",
   unit,
   animationDelay,
 }) => {

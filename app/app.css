@@ -146,8 +146,8 @@ button {
   /* animation: glowPulse 300ms ease-in-out infinite; */
   box-shadow: -4px -4px 2px var(--glow-color, rgba(0, 0, 0, 0.3));
 }
-.glow-pulse-amber {
-  /* This sets the glow color to amber */
+.glow-pulse-blue {
+  /* This sets the glow color to blue */
   --glow-color: rgba(245, 158, 11, 0.4);
   animation: glowPulse 2.5s ease-in-out infinite alternate;
 }

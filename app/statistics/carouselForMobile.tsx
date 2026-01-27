@@ -8,6 +8,7 @@ export const ImageCarouselForMobile = ({
   goToPrev,
   goToNext,
   totalPages,
+  year,
   documentFileName,
 }: {
   currentPage: number;
@@ -15,6 +16,7 @@ export const ImageCarouselForMobile = ({
   goToNext: () => void;
   goToPrev: () => void;
   totalPages: number;
+  year: number;
   documentFileName: string;
 }) => {
   return (
@@ -26,7 +28,8 @@ export const ImageCarouselForMobile = ({
         <DownloadBtn
           coords="top-22 landscape:left-0 landscape:top-80 landscape:scale-80"
           text="Download"
-          color="yellow"
+          color="blue"
+          year={year}
         />
         <div className="absolute top-10 landscape:top-105 z-100 items-center flex-col justify-items-center">
           <p className="font-bold text-xl text-center">{documentFileName}</p>

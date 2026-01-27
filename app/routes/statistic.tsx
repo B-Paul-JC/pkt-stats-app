@@ -68,11 +68,7 @@ const PDFViewer: React.FC = () => {
             </select>
           </div>
           <Header {...{ documentFileName, currentPage, totalPages }} />
-          <DownloadBtn
-            text="Download"
-            color="yellow"
-            coords="bottom-8 right-8"
-          />
+          <DownloadBtn year={year} text="Download" color="blue" coords="bottom-8 right-8" />
         </div>
 
         <ImageCarousel
@@ -87,7 +83,7 @@ const PDFViewer: React.FC = () => {
         />
       </div>
       <ImageCarouselForMobile
-        {...{
+        {...{year,
           currentImageSrc,
           currentPage,
           goToPrev,

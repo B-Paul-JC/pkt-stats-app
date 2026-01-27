@@ -218,7 +218,7 @@ export default function Login() {
       <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-[0_20px_50px_rgba(202,138,4,0.07)] overflow-hidden flex flex-col md:flex-row border border-gray-100">
         {/* Left Side: Brand / Logo Area */}
         <div className="w-full md:w-1/2 bg-[#212121] p-12 flex flex-col justify-between relative overflow-hidden">
-          {/* Abstract Shapes for visual interest - Using Yellow/Amber tones */}
+          {/* Abstract Shapes for visual interest - Using blue/blue tones */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl transform -translate-x-1/2 translate-y-1/2"></div>
 

@@ -35,7 +35,7 @@ const TopTextButton: React.FC<{
     >
       {/* --- Text Positioned Above the Circle --- */}
       <div
-        className="absolute group-hover:-top-0  cursor-pointer group-hover:text-transparent transition-all duration-300 -top-12 md:-top-8 md:left-1/3 left-1/2 -translate-x-1/2 
+        className="absolute group-hover:top-0  cursor-pointer group-hover:text-transparent transition-all duration-300 -top-12 md:-top-8 md:left-1/3 left-1/2 -translate-x-1/2 
                        text-sm font-bold text-gray-800 whitespace-nowrap pointer-events-none"
       >
         {button.label}
@@ -43,7 +43,7 @@ const TopTextButton: React.FC<{
 
       {/* --- Circular Button (Fixed Size) --- */}
       <NavLink
-        to={`/${disp === "absolute" ? "statistic/"+button.label.toLowerCase() : "under-construction"}`}
+        to={`/${disp === "absolute" ? "statistic/" + button.label.toLowerCase() : "under-construction"}`}
       >
         <button
           className={`
@@ -51,13 +51,13 @@ const TopTextButton: React.FC<{
             flex items-center justify-center
             shadow-lg focus:outline-none
             transition-all duration-300
-            ${disp === "absolute" ? button.color || "animate-bounce cursor-pointer bg-amber-200 hover:bg-indigo-700" : "bg-gray-600 hover:bg-gray-700 cursor-not-allowed"}
+            ${disp === "absolute" ? button.color || "animate-bounce cursor-pointer bg-blue-200 hover:bg-indigo-700" : "bg-gray-600 hover:bg-gray-700 cursor-not-allowed"}
           `}
           onClick={(e) => {
             const { clientX, clientY } = e;
             localStorage.setItem(
               `last-coords`,
-              JSON.stringify({ x: clientX, y: clientY })
+              JSON.stringify({ x: clientX, y: clientY }),
             );
           }}
           style={{ animationDelay: `${+button.id * 120}ms` }}
@@ -71,14 +71,14 @@ const TopTextButton: React.FC<{
 const RandomGrid: React.FC<{ buttons: ButtonItem[] }> = ({ buttons }) => {
   return (
     // The container is relative and given a fixed height/width to define the space
-    <div className="relative w-full h-[500px] max-w-7xl mx-auto">
+    <div className="relative w-full h-125 max-w-7xl mx-auto">
       {buttons.map((button) => (
         <TopTextButton
           key={button.id}
           button={button}
           disp={
             ["Students", "Staff", "Accomodation", "Faculty"].includes(
-              button.label
+              button.label,
             )
               ? "absolute"
               : "disable"
