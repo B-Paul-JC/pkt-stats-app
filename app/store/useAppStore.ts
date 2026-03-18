@@ -1,9 +1,4 @@
 import { create } from "zustand";
-import { ACCESS_LEVELS, type AppRole } from "~/auth/accessLevel";
-import {
-  loadUserFromLocalStorage as LUFLS,
-  type USER,
-} from "~/auth/userSimulation";
 import {
   API_URL,
   type FACULTY,
@@ -174,12 +169,6 @@ const INITIAL_STATE: IAppStoreVariables = {
   generatedWidgets: [],
   // Auth Initial State (Hydrated from Local Storage)
   modalTop: "-100vh",
-  userProfile: LUFLS(),
-  isLoggedIn: !!LUFLS(),
-  appRole: LUFLS() ? LUFLS().userType : "VISITOR",
-  accessLevel: LUFLS()
-    ? ACCESS_LEVELS[LUFLS().userType as string as AppRole]
-    : ACCESS_LEVELS["VISITOR"],
   // --- AUTH STATE ---
   isAuthenticated: false,
   user: null,
@@ -195,21 +184,6 @@ export const useAppStore = create<IAppStore>((set) => ({
       config,
     });
   },
-  // --- AUTHENTICATION ACTIONS ---
-  setAuthenticatedUser: (user: USER) =>
-    set({
-      userProfile: user,
-      isLoggedIn: true,
-      accessLevel: ACCESS_LEVELS[user.userType],
-      appRole: user.userType,
-    }),
-  setAppRole(appRole) {
-    set({ appRole });
-  },
-  setAccessLevel(accessLevel) {
-    set({ accessLevel });
-  },
-  setIsLoggedIn: (isLoggedIn: boolean) => set({ isLoggedIn }),
   toggleModalTop() {
     set((turnip) => {
       let newModalTop: IAppStoreVariables["modalTop"] = "-100vh";

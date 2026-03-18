@@ -23,8 +23,8 @@ export function SchoolStatsApp() {
     setGeneratedWidgets((prev) => [newWidget, ...prev]);
   };
 
-  const [currentView, setCurrentView] = useState<View>("Analysis");
-  const views: View[] = ["Analysis", "Data Finder"];
+  const [currentView, setCurrentView] = useState<View>("Data Finder");
+  const views: View[] = ["Data Finder", "Analysis"];
 
   return (
     <div className="flex min-h-screen bg-slate-100 font-sans text-slate-800">

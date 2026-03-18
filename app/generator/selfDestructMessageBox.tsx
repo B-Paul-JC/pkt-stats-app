@@ -67,7 +67,9 @@ export const SelfDestructMessage: React.FC<SelfDestructMessageProps> = ({
         className="inset-0 flex items-center justify-center h-8 w-8 bg-red-400 rounded-full hover:text-white transition-colors"
         aria-label="Dismiss now"
       >
-        <X className="w-5 h-5 text-white shrink-0" />
+        <span className="w-5 h-5 text-white shrink-0">
+          !
+        </span>
       </button>
 
       {/* Message Content */}

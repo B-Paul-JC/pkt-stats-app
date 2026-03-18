@@ -370,11 +370,17 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
               disabled={!domain}
             >
               <option value="">Select...</option>
-              {activeConfig?.breakdowns.map((b) => (
-                <option key={b.id} value={b.id}>
-                  {b.label}
-                </option>
-              ))}
+              {activeConfig?.breakdowns.map((b) => {
+                if (hasDept && b.id === "department") {
+                  return null;
+                } else {
+                  return (
+                    <option key={b.id} value={b.id}>
+                      {b.label}
+                    </option>
+                  );
+                }
+              })}
             </select>
           </div>
 

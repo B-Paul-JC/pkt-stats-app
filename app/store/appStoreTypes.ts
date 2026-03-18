@@ -1,5 +1,3 @@
-import type { AppRole, IAccessLevel } from "~/auth/accessLevel";
-import type { USER } from "~/auth/userSimulation";
 import type { StudentListResponse, WidgetData } from "~/generator/types_interfaces";
 
 export type ChartConfig = {
@@ -111,10 +109,6 @@ export interface IAppStoreVariables {
   // Store the raw data from your JSON files
   config: ChartConfig;
   // Store the user's filter selection
-  appRole: AppRole;
-  userProfile: USER | null; // The authenticated user's details
-  isLoggedIn: boolean;
-  accessLevel: IAccessLevel;
   modalTop: "0vh" | "-100vh";
   isAuthenticated: boolean;
   user: User | null;
@@ -155,10 +149,7 @@ export interface IAppStoreActions {
   // --- ACTIONS ---
   // Functions to update the state
   setConfig: (config: ChartConfig) => void;
-  setAppRole: (role: AppRole) => void;
   toggleModalTop: () => void;
-  setAccessLevel: (accessLevel: IAccessLevel) => void;
-  setIsLoggedIn: (isLoggedIn: boolean) => void;
   reset: () => void;
   checkAuth: () => Promise<void>;
   login: (user: User) => void;
