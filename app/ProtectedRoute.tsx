@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { useAppStore } from "~/store/useAppStore";
 import { LoadingScreen } from "./designs/LoadingScreen";
 
@@ -14,7 +14,7 @@ export const ProtectedRoute = ({ children }: Props) => {
   // Redirect if done loading and not authenticated
   useEffect(() => {
     if (!isLoadingAuth && !isAuthenticated) {
-      navigate("/login", { viewTransition: true, replace: false });
+      navigate("/login", { state: { from: location.pathname } });
     }
   }, [isLoadingAuth, isAuthenticated, navigate]);
 

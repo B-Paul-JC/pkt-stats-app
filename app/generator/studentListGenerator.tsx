@@ -63,6 +63,7 @@ export const StudentListGenerator: React.FC<Props> = ({ onDataReceived }) => {
         faculty: hasFaculty ? faculty_id : getFacultyId(faculty),
         hall: getHallId(hall),
         uid: useStore.user?.uid,
+        data_source: "csv", // Indicate we want CSV data
       };
 
       const res = await fetch(API_URL, {

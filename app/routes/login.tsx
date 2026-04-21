@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { useAppStore } from "~/store/useAppStore";
 import {
   Lock,
@@ -26,6 +26,11 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Login() {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+// Retrieve the 'from' parameter, defaulting to the home page
+  const from = location.state?.from || "/";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authMode, setAuthMode] = useState<
@@ -39,7 +44,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const loginAction = useAppStore((state) => state.login);
-  const navigate = useNavigate();
 
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -82,7 +86,7 @@ export default function Login() {
 
       if (data.success) {
         loginAction(data.user);
-        navigate("/generate-stats");
+        navigate(from, { replace: true, });
       } else {
         setError(data.message || "Invalid credentials. Please try again.");
       }

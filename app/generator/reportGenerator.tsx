@@ -138,6 +138,7 @@ export const ReportGenerator: React.FC<Props> = ({ role, onGenerate }) => {
         body: JSON.stringify({
           action: "generate_report",
           uid: useStore.user?.uid,
+          data_source: "csv", // Indicate we want CSV data
           ...getPayload(),
         }),
       });

@@ -5,6 +5,7 @@ export default [
   route("/statistics", "routes/statistic.tsx"),
   route("/generate-stats", "routes/generator.tsx"),
   route("/login", "routes/login.tsx"),
+  route("/upload", "uploader/upload.tsx"),
   route("/under-construction", "routes/underConstruction.tsx"),
   route("*", "analytics/pages.tsx"),
 ] satisfies RouteConfig;

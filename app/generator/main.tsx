@@ -9,8 +9,11 @@ import { StudentListTable } from "./studentListTable";
 import { StudentListGenerator } from "./studentListGenerator";
 import { useState } from "react";
 import { getDepartment, getFaculty } from "./facultiesAndDepartmentsMapper";
+import { StaffReportGenerator } from "./staffGenerator";
+import { StaffListGenerator } from "./staffListGenerator";
 
 type View = "Analysis" | "Data Finder";
+type Persona = "Student" | "Staff";
 
 export function SchoolStatsApp() {
   const generatedWidgets = useAppStore((state) => state.generatedWidgets);
@@ -25,6 +28,9 @@ export function SchoolStatsApp() {
 
   const [currentView, setCurrentView] = useState<View>("Data Finder");
   const views: View[] = ["Data Finder", "Analysis"];
+
+  const [currentPersona, setCurrentPersona] = useState<Persona>("Student");
+  const personas: Persona[] = ["Student", "Staff"];
 
   return (
     <div className="flex min-h-screen bg-slate-100 font-sans text-slate-800">
@@ -57,7 +63,9 @@ export function SchoolStatsApp() {
                   </p>
                 )}
                 {!!faculty_id && (
-                  <p className="text-sm font-medium">Faculty: {getFaculty(faculty_id)}</p>
+                  <p className="text-sm font-medium">
+                    Faculty: {getFaculty(faculty_id)}
+                  </p>
                 )}
               </div>
             </div>
@@ -67,6 +75,17 @@ export function SchoolStatsApp() {
                   key={r}
                   onClick={() => setCurrentView(r)}
                   className={`px-3 py-1 text-xs font-bold rounded-sm capitalize transition-all ${currentView === r ? "bg-blue-500 text-white shadow-sm" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"}`}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <div className="flex bg-white rounded-md shadow-sm border border-slate-200 p-0.5">
+              {personas.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setCurrentPersona(r)}
+                  className={`px-3 py-1 text-xs font-bold rounded-sm capitalize transition-all ${currentPersona === r ? "bg-blue-500 text-white shadow-sm" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"}`}
                 >
                   {r}
                 </button>
@@ -82,17 +101,39 @@ export function SchoolStatsApp() {
         </header>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-          {currentView === "Analysis" && (
+          {/* VIEW 1: STUDENT ANALYSIS */}
+          {currentView === "Analysis" && currentPersona === "Student" && (
             <ReportGenerator
               role={role as Role}
               onGenerate={handleReportGenerated}
             />
           )}
 
-          {/* VIEW 2: DIRECTORY */}
-          {currentView === "Data Finder" && (
+          {/* VIEW 2: STUDENT DIRECTORY */}
+          {currentView === "Data Finder" && currentPersona === "Student" && (
             <div className="print-hide">
               <StudentListGenerator
+                onDataReceived={(data) => {
+                  setGeneratedWidgets((prev) => [data, ...prev]);
+                }}
+              />
+            </div>
+          )}
+
+          {/* VIEW 3: STAFF ANALYSIS */}
+          {currentView === "Analysis" && currentPersona === "Staff" && (
+            <div className="print-hide">
+              <StaffReportGenerator
+                role={role as Role}
+                onGenerate={handleReportGenerated}
+              />
+            </div>
+          )}
+
+          {/* VIEW 3: STAFF DIRECTORY */}
+          {currentView === "Data Finder" && currentPersona === "Staff" && (
+            <div className="print-hide">
+              <StaffListGenerator
                 onDataReceived={(data) => {
                   setGeneratedWidgets((prev) => [data, ...prev]);
                 }}

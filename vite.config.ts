@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://192.168.3.83/exinsab",
+        target: "http://192.168.3.16/exinsab",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ""), // Removes '/api' before sending to PHP

@@ -34,7 +34,7 @@ export const StudentListTable: React.FC<Props> = ({ data }) => {
   const headers = Object.keys(data.data[0]);
 
   const formatHeader = (key: string) => {
-    return key.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    return key.replace(/_/g, " ").replace("staff", "").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   const handleDownload = async (format: string) => {

@@ -85,7 +85,14 @@ export interface StudentListResponse {
 }
 
 // --- Report Configuration ---
-export type Domain = "students" | "staff" | "financials" | "academics";
+export type Domain =
+  | "students"
+  | "staff"
+  | "financials"
+  | "academics"
+  | "staff_demographics"
+  | "career_analytics"
+  | "geographic";
 
 export interface FilterOption {
   value: string;
